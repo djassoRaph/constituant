@@ -1,0 +1,424 @@
+/**
+ * Constituant - Mobile & Responsive Styles
+ * Progressive enhancement for tablets and desktops
+ */
+
+/* ============================================================================
+   Mobile Optimizations (Default - 320px+)
+   ========================================================================== */
+
+/* Improve touch targets on mobile */
+@media (pointer: coarse) {
+    .vote-btn,
+    .btn,
+    .nav-link {
+        min-height: 48px;
+        min-width: 48px;
+    }
+}
+
+/* Optimize for small screens */
+@media (max-width: 374px) {
+    :root {
+        --spacing-md: 0.75rem;
+        --spacing-lg: 1rem;
+        --spacing-xl: 1.5rem;
+    }
+
+    .bill-card {
+        padding: var(--spacing-lg);
+    }
+
+    .vote-actions {
+        flex-direction: column;
+    }
+
+    .vote-btn {
+        width: 100%;
+    }
+}
+
+/* ============================================================================
+   Tablet (768px+)
+   ========================================================================== */
+
+@media (min-width: 768px) {
+    .container {
+        padding: 0 var(--spacing-xl);
+    }
+
+    /* Two-column grid for bills */
+    .bills-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* About features in row */
+    .about-features {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* Modal wider on tablet */
+    .modal-content {
+        max-width: 600px;
+    }
+
+    /* Header adjustments */
+    .header-content {
+        flex-wrap: nowrap;
+    }
+
+    /* Vote actions stay in row */
+    .vote-actions {
+        flex-wrap: nowrap;
+    }
+}
+
+/* ============================================================================
+   Tablet Landscape (1024px+)
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+    /* Keep bills in single column but wider cards */
+    .bills-grid {
+        grid-template-columns: 1fr;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    /* Larger cards with more padding */
+    .bill-card {
+        padding: var(--spacing-2xl);
+    }
+
+    /* Hover effects more pronounced */
+    .bill-card:hover {
+        transform: translateY(-4px);
+    }
+
+    /* Vote buttons larger */
+    .vote-btn {
+        font-size: 1rem;
+        padding: var(--spacing-lg);
+    }
+
+    /* About section features larger */
+    .about-features {
+        gap: var(--spacing-xl);
+    }
+
+    .feature {
+        padding: var(--spacing-xl);
+    }
+}
+
+/* ============================================================================
+   Desktop (1200px+)
+   ========================================================================== */
+
+@media (min-width: 1200px) {
+    /* Increased spacing */
+    .main-content {
+        padding: var(--spacing-2xl) 0;
+    }
+
+    .bills-section {
+        margin-bottom: var(--spacing-2xl);
+    }
+
+    /* Bills grid with comfortable max width */
+    .bills-grid {
+        max-width: 1000px;
+    }
+}
+
+/* ============================================================================
+   Large Desktop (1440px+)
+   ========================================================================== */
+
+@media (min-width: 1440px) {
+    /* Optional: Show two columns for large screens */
+    .bills-grid {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: none;
+    }
+}
+
+/* ============================================================================
+   Orientation-specific Styles
+   ========================================================================== */
+
+/* Landscape mobile devices */
+@media (max-height: 500px) and (orientation: landscape) {
+    .site-header {
+        padding: var(--spacing-md) 0;
+        position: static; /* Remove sticky on short landscape */
+    }
+
+    .modal-content {
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+}
+
+/* ============================================================================
+   High Resolution Displays
+   ========================================================================== */
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    /* Sharper borders and shadows */
+    .bill-card {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    .site-header {
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+}
+
+/* ============================================================================
+   Reduced Motion Preference
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .spinner {
+        animation: none;
+        border-top-color: var(--color-primary);
+    }
+}
+
+/* ============================================================================
+   Touch Device Optimizations
+   ========================================================================== */
+
+@media (hover: none) and (pointer: coarse) {
+    /* Remove hover effects on touch devices */
+    .bill-card:hover {
+        transform: none;
+    }
+
+    .vote-btn:not(:disabled):hover {
+        transform: none;
+    }
+
+    /* Add active states instead */
+    .vote-btn:not(:disabled):active {
+        transform: scale(0.98);
+    }
+
+    .nav-link:hover {
+        background: transparent;
+        color: var(--color-primary);
+    }
+
+    .nav-link:active {
+        background: var(--color-primary);
+        color: var(--color-white);
+    }
+}
+
+/* ============================================================================
+   Safe Area Insets (iPhone X, etc.)
+   ========================================================================== */
+
+@supports (padding: max(0px)) {
+    .site-header,
+    .site-footer {
+        padding-left: max(var(--spacing-md), env(safe-area-inset-left));
+        padding-right: max(var(--spacing-md), env(safe-area-inset-right));
+    }
+
+    .container {
+        padding-left: max(var(--spacing-md), env(safe-area-inset-left));
+        padding-right: max(var(--spacing-md), env(safe-area-inset-right));
+    }
+
+    .toast {
+        bottom: max(var(--spacing-xl), env(safe-area-inset-bottom));
+    }
+}
+
+/* ============================================================================
+   Responsive Typography Adjustments
+   ========================================================================== */
+
+@media (min-width: 768px) {
+    html {
+        font-size: 17px;
+    }
+}
+
+@media (min-width: 1024px) {
+    html {
+        font-size: 18px;
+    }
+
+    .bill-title {
+        font-size: 1.5rem;
+    }
+}
+
+/* ============================================================================
+   Footer Responsive Adjustments
+   ========================================================================== */
+
+@media (max-width: 767px) {
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-nav {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+}
+
+/* ============================================================================
+   Modal Responsive Adjustments
+   ========================================================================== */
+
+@media (max-width: 767px) {
+    .modal {
+        align-items: flex-end;
+        padding: 0;
+    }
+
+    .modal-content {
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        max-width: 100%;
+        width: 100%;
+        animation: modalSlideUp 250ms ease;
+    }
+
+    @keyframes modalSlideUp {
+        from {
+            opacity: 0;
+            transform: translateY(100%);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .modal-actions .btn {
+        width: 100%;
+    }
+}
+
+/* ============================================================================
+   Performance Optimization
+   ========================================================================== */
+
+@media (prefers-reduced-data: reduce) {
+    /* Load fewer resources on slow connections */
+    .spinner {
+        border-width: 2px;
+    }
+
+    .bill-card {
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+}
+
+/* ============================================================================
+   Accessibility - High Contrast Mode
+   ========================================================================== */
+
+@media (prefers-contrast: high) {
+    :root {
+        --color-primary: #0000ff;
+        --color-secondary: #ff0000;
+        --color-border: #000000;
+    }
+
+    .bill-card {
+        border: 2px solid var(--color-border);
+    }
+
+    .vote-btn {
+        border-width: 3px;
+    }
+
+    .urgency-badge {
+        border: 2px solid currentColor;
+    }
+}
+
+/* ============================================================================
+   Landscape Tablet Specific
+   ========================================================================== */
+
+@media (min-width: 768px) and (max-width: 1023px) and (orientation: landscape) {
+    .bills-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .about-features {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* ============================================================================
+   Ultra-wide Screens (1920px+)
+   ========================================================================== */
+
+@media (min-width: 1920px) {
+    .container {
+        max-width: 1400px;
+    }
+
+    .bills-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-xl);
+    }
+
+    .bill-card {
+        padding: var(--spacing-2xl);
+    }
+}
+
+/* ============================================================================
+   Aspect Ratio Specific Adjustments
+   ========================================================================== */
+
+@media (min-aspect-ratio: 16/9) {
+    /* Wide aspect ratio optimizations */
+    .bills-grid {
+        gap: var(--spacing-xl);
+    }
+}
+
+/* ============================================================================
+   iOS Safari Specific Fixes
+   ========================================================================== */
+
+@supports (-webkit-touch-callout: none) {
+    /* Fix for iOS Safari bottom bar */
+    .main-content {
+        min-height: -webkit-fill-available;
+    }
+
+    /* Fix for iOS Safari input zoom */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea,
+    select {
+        font-size: 16px !important;
+    }
+}

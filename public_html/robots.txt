@@ -1,0 +1,50 @@
+# robots.txt for Constituant
+
+# Allow all well-behaved bots
+User-agent: *
+Allow: /
+
+# Disallow admin area
+Disallow: /admin/
+
+# Disallow API endpoints (optional - remove if you want APIs indexed)
+Disallow: /api/
+
+# Disallow config directory
+Disallow: /config/
+
+# Allow specific assets
+Allow: /assets/
+
+# Common bot-specific rules
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+# Block bad bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+# Crawl delay for aggressive bots
+User-agent: *
+Crawl-delay: 1
+
+# Sitemap location (create this file if you want)
+Sitemap: https://constituant.fr/sitemap.xml
