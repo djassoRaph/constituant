@@ -196,7 +196,7 @@ require_once __DIR__ . '/config/config.php';
                 <nav class="footer-nav">
                     <a href="#about" class="footer-link">À propos</a>
                     <a href="mailto:contact@constituant.fr" class="footer-link">Contact</a>
-                    <a href="https://github.com/constituant" class="footer-link" target="_blank" rel="noopener">GitHub</a>
+                    <a href="https://github.com/djassoRaph/constituant" class="footer-link" target="_blank" rel="noopener">GitHub</a>
                 </nav>
             </div>
             <p class="footer-note">
