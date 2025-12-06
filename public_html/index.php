@@ -109,38 +109,84 @@ require_once __DIR__ . '/config/config.php';
 
     <!-- About Section -->
     <section id="about" class="about-section">
-        <div class="container">
-            <h2>À propos de Constituant</h2>
-            <div class="about-content">
+    <div class="container">
+        <h2>À propos de Constituant</h2>
+        
+        <div class="about-content">
+            <p>
+                <strong>Constituant</strong> est une plateforme citoyenne qui a pour but de devenir 
+                une association loi 1901. Pour l'instant, elle recueille les votes de façon anonyme 
+                et simpliste sur les projets de loi débattus au Parlement européen et à l'Assemblée 
+                nationale française.
+            </p>
+            
+            <p>
+                Si une association se crée autour de ce projet, les adhérents pourront plus tard 
+                voter et montrer leur intérêt pour leur participation à la vie politique de la 
+                France et de l'Europe.
+            </p>
+            
+            <p>
+                <strong>État actuel du projet :</strong> Pour l'instant, ceci est le projet d'une 
+                seule personne, donc impossible de créer une association immédiatement. Si vous 
+                souhaitez participer ou en savoir plus, contactez-moi à 
+                <a href="mailto:contact@constituant.fr">contact@constituant.fr</a>.
+            </p>
+            
+            <div class="alpha-notice">
+                <strong>⚠️ Version Alpha</strong>
                 <p>
-                    <strong>Constituant</strong> est une plateforme citoyenne qui vous permet d'exprimer
-                    votre opinion sur les lois actuellement débattues au Parlement européen et à
-                    l'Assemblée nationale française.
+                    Ce site est encore en <strong>version alpha</strong>. Il est open source et 
+                    ouvert à la participation citoyenne, que ce soit dans le code ou par messages. 
+                    D'autres évolutions sont possibles — je suis à l'écoute d'innovations et de 
+                    suggestions pour améliorer la plateforme.
                 </p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature">
+                    <span class="icon">🔒</span>
+                    <h3>Anonyme</h3>
+                    <p>Vos votes sont anonymes et sécurisés</p>
+                </div>
+                
+                <div class="feature">
+                    <span class="icon">⚡</span>
+                    <h3>Temps réel</h3>
+                    <p>Résultats mis à jour instantanément</p>
+                </div>
+                
+                <div class="feature">
+                    <span class="icon">🌍</span>
+                    <h3>EU & France</h3>
+                    <p>Suivez les votes des deux assemblées</p>
+                </div>
+                
+                <div class="feature">
+                    <span class="icon">💻</span>
+                    <h3>Open Source</h3>
+                    <p>Code ouvert, transparent, participatif</p>
+                </div>
+            </div>
+            
+            <div class="participation-cta">
+                <h3>Vous voulez participer ?</h3>
                 <p>
-                    Votre vote est anonyme et sert à mesurer l'opinion publique sur les législations
-                    en cours. Les résultats agrégés sont affichés en temps réel.
+                    Que vous soyez développeur, designer, juriste, ou simplement citoyen engagé, 
+                    votre contribution est la bienvenue !
                 </p>
-                <div class="about-features">
-                    <div class="feature">
-                        <span class="feature-icon">🔒</span>
-                        <h3>Anonyme</h3>
-                        <p>Vos votes sont anonymes et sécurisés</p>
-                    </div>
-                    <div class="feature">
-                        <span class="feature-icon">⚡</span>
-                        <h3>Temps réel</h3>
-                        <p>Résultats mis à jour instantanément</p>
-                    </div>
-                    <div class="feature">
-                        <span class="feature-icon">🌍</span>
-                        <h3>EU & France</h3>
-                        <p>Suivez les votes des deux assemblées</p>
-                    </div>
+                <div class="cta-buttons">
+                    <a href="mailto:contact@constituant.fr" class="btn-primary">
+                        📧 Me contacter
+                    </a>
+                    <a href="https://github.com/constituant" class="btn-secondary" target="_blank" rel="noopener">
+                        💻 Voir le code
+                    </a>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
     <!-- Footer -->
     <footer class="site-footer">

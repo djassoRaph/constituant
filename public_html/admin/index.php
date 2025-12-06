@@ -351,7 +351,7 @@ $csrfToken = generateCsrfToken();
                                                     class="btn btn-primary btn-small">
                                                 Modifier
                                             </button>
-                                            <button onclick="deleteBill('<?php echo htmlspecialchars($bill['id'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($bill['title'], ENT_QUOTES); ?>')"
+                                            <button onclick="deleteBill(<?php echo json_encode($bill['id']); ?>, <?php echo json_encode($bill['title']); ?>)"
                                                     class="btn btn-danger btn-small">
                                                 Supprimer
                                             </button>

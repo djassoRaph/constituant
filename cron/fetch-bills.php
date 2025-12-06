@@ -6,7 +6,7 @@
  * Run via cron: php /path/to/cron/fetch-bills.php
  *
  * Example cron entry (every 6 hours):
- * 0 */6 * * * /usr/local/php8.1/bin/php /home/user/constituant/cron/fetch-bills.php >> /home/user/logs/fetch-bills.log 2>&1
+ * 0 *\/6 * * * /usr/local/php8.1/bin/php /home/user/constituant/cron/fetch-bills.php >> /home/user/logs/fetch-bills.log 2>&1
  *
  * @package Constituant
  */
