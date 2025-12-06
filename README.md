@@ -2,7 +2,7 @@
 
 **Votre voix sur les lois du jour** - A civic engagement platform that allows French and EU citizens to vote on legislation being debated in the European Parliament and French National Assembly.
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)
 ![PHP](https://img.shields.io/badge/PHP-8.0%2B-blue.svg)
 ![License](https://img.shields.io/badge/license-AGPL--3.0-green.svg)
 
