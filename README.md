@@ -104,8 +104,8 @@ Edit `public_html/config/database.php`:
 ```php
 const DB_HOST = 'localhost';     // Usually 'localhost' for shared hosting
 const DB_NAME = 'constituant';    // Your database name
-const DB_USER = 'your_db_user';   // Your database username
-const DB_PASS = 'your_password';  // Your database password
+const DB_USER = 'constituant_user';   // Your database username
+const DB_PASS = 'Dev_Password123!';  // Your database password
 ```
 
 ### Step 5: Set Admin Password
@@ -153,8 +153,8 @@ Create `public_html/.env` (outside public directory if possible):
 ```env
 DB_HOST=localhost
 DB_NAME=constituant
-DB_USER=your_user
-DB_PASS=your_password
+DB_USER=constituant_user
+DB_PASS=Dev_Password123!
 ADMIN_PASSWORD=your_admin_password
 ```
 

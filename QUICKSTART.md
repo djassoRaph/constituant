@@ -39,7 +39,7 @@ Edit `public_html/config/database.php`:
 ```php
 const DB_NAME = 'constituant';
 const DB_USER = 'constituant_user';
-const DB_PASS = 'your_password';
+const DB_PASS = 'Dev_Password123!';
 ```
 
 ### 3. Configure App (1 min)

@@ -54,9 +54,9 @@ This guide will walk you through deploying Constituant on O2switch shared hostin
    - Update these values:
      ```php
      const DB_HOST = 'localhost';              // Keep as localhost
-     const DB_NAME = 'username_constituant';   // Your full database name
-     const DB_USER = 'username_constituant_user'; // Your full username
-     const DB_PASS = 'your_password';          // Password from step 1.3
+     const DB_NAME = 'constituant';   // Your full database name
+     const DB_USER = 'constituant_user'; // Your full username
+     const DB_PASS = 'Dev_Password123!';          // Password from step 1.3
      ```
 
 2. **Edit App Configuration**
