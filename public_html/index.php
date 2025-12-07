@@ -113,61 +113,117 @@ require_once __DIR__ . '/config/config.php';
         <h2>À propos de Constituant</h2>
         
         <div class="about-content">
+            <h3>🏛️ Notre Mission</h3>
             <p>
-                <strong>Constituant</strong> est une plateforme citoyenne qui a pour but de devenir 
-                une association loi 1901. Pour l'instant, elle recueille les votes de façon anonyme 
-                et simpliste sur les projets de loi débattus au Parlement européen et à l'Assemblée 
-                nationale française.
+                <strong>Constituant</strong> est une plateforme citoyenne qui vise à rapprocher les 
+                citoyens de leurs institutions démocratiques. Elle permet à chacun d'exprimer son 
+                opinion sur les projets de loi débattus au Parlement européen et à l'Assemblée 
+                nationale française, de manière simple, anonyme et transparente.
             </p>
             
+            <h3>🤔 Pourquoi cette plateforme ?</h3>
             <p>
-                Si une association se crée autour de ce projet, les adhérents pourront plus tard 
-                voter et montrer leur intérêt pour leur participation à la vie politique de la 
-                France et de l'Europe.
+                Dans une démocratie représentative, les citoyens ne sont consultés qu'occasionnellement 
+                lors des élections. Entre-temps, les décisions législatives importantes sont prises 
+                sans que l'on puisse exprimer directement notre position sur chaque sujet.
+            </p>
+            <p>
+                <strong>Constituant</strong> propose une approche complémentaire : donner à chaque 
+                citoyen la possibilité de voter sur les lois en cours de débat, et ainsi créer une 
+                base de données d'opinions citoyennes indépendante et transparente.
             </p>
             
+            <div class="mission-box">
+                <h3>🎯 Nos Objectifs</h3>
+                <ul>
+                    <li><strong>Transparence</strong> : Recueillir l'opinion citoyenne de manière ouverte et vérifiable</li>
+                    <li><strong>Complémentarité</strong> : Offrir aux élus une vision directe des préoccupations de leurs électeurs</li>
+                    <li><strong>Indépendance</strong> : Créer un outil citoyen, libre de toute influence institutionnelle</li>
+                    <li><strong>Participation</strong> : Encourager l'engagement civique au-delà des scrutins électoraux</li>
+                </ul>
+            </div>
+            
+            <h3>📊 Une Alternative aux Sondages Traditionnels</h3>
             <p>
-                <strong>État actuel du projet :</strong> Pour l'instant, ceci est le projet d'une 
-                seule personne, donc impossible de créer une association immédiatement. Si vous 
-                souhaitez participer ou en savoir plus, contactez-moi à 
-                <a href="mailto:contact@constituant.fr">contact@constituant.fr</a>.
+                Les sondages d'opinion peuvent être influencés par de nombreux facteurs : la formulation 
+                des questions, la sélection des répondants, les commanditaires, ou encore l'interprétation 
+                des résultats. De plus, les citoyens n'ont généralement pas accès aux méthodologies 
+                détaillées ni aux données brutes.
+            </p>
+            <p>
+                <strong>Constituant</strong> adopte une approche différente :
+            </p>
+            <ul>
+                <li>✅ <strong>Questions claires</strong> : Pour ou contre chaque projet de loi, sans ambiguïté</li>
+                <li>✅ <strong>Accès libre</strong> : Tout citoyen peut participer, sans sélection préalable</li>
+                <li>✅ <strong>Résultats publics</strong> : Les agrégats de votes sont visibles en temps réel</li>
+                <li>✅ <strong>Open source</strong> : Le code est ouvert, auditable par tous</li>
+                <li>✅ <strong>Indépendance</strong> : Aucun financement institutionnel, aucune influence extérieure</li>
+            </ul>
+            
+            <h3>🚀 Vision à Long Terme</h3>
+            <p>
+                Cette plateforme a pour ambition de devenir une <strong>association loi 1901</strong>, 
+                gérée de manière démocratique par ses adhérents. À terme, les membres de l'association 
+                pourront non seulement voter, mais aussi proposer des projets de loi alternatifs, 
+                débattre des enjeux législatifs, et créer un espace de réflexion collective sur la 
+                gouvernance.
+            </p>
+            <p>
+                L'objectif est de montrer aux élus qu'il existe une demande citoyenne pour une 
+                <strong>démocratie plus participative</strong>, où les représentants peuvent prendre 
+                en compte l'avis direct de leurs électeurs avant de voter sur des textes qui nous 
+                concernent tous.
             </p>
             
             <div class="alpha-notice">
-                <strong>⚠️ Version Alpha</strong>
+                <strong>⚠️ Version Alpha - Projet Indépendant</strong>
                 <p>
-                    Ce site est encore en <strong>version alpha</strong>. Il est open source et 
-                    ouvert à la participation citoyenne, que ce soit dans le code ou par messages. 
-                    D'autres évolutions sont possibles — je suis à l'écoute d'innovations et de 
-                    suggestions pour améliorer la plateforme.
+                    Ce site est actuellement en phase de développement <span class="italic">version alpha</span>
+                    et représente le projet d'une seule personne. Il n'est affilié à aucun parti 
+                    politique, aucun gouvernement, ni aucune organisation. 
+                </p>
+                <p>
+                    L'objectif est de tester la faisabilité technique et de mesurer l'intérêt citoyen 
+                    avant d'envisager la création d'une association formelle.
                 </p>
             </div>
             
-            <div class="features-grid">
-                <div class="feature">
+            <h3>💡 Principes Fondateurs</h3>
+            <div class="principles-grid">
+                <div class="principle">
+                    <span class="icon">🔓</span>
+                    <h4>Transparence</h4>
+                    <p>Code ouvert, données publiques, méthode vérifiable</p>
+                </div>
+                <div class="principle">
+                    <span class="icon">⚖️</span>
+                    <h4>Neutralité</h4>
+                    <p>Aucune influence politique, aucun biais dans les questions</p>
+                </div>
+                <div class="principle">
                     <span class="icon">🔒</span>
-                    <h3>Anonyme</h3>
-                    <p>Vos votes sont anonymes et sécurisés</p>
+                    <h4>Vie privée</h4>
+                    <p>Votes anonymes, pas de collecte de données personnelles</p>
                 </div>
-                
-                <div class="feature">
-                    <span class="icon">⚡</span>
-                    <h3>Temps réel</h3>
-                    <p>Résultats mis à jour instantanément</p>
-                </div>
-                
-                <div class="feature">
-                    <span class="icon">🌍</span>
-                    <h3>EU & France</h3>
-                    <p>Suivez les votes des deux assemblées</p>
-                </div>
-                
-                <div class="feature">
-                    <span class="icon">💻</span>
-                    <h3>Open Source</h3>
-                    <p>Code ouvert, transparent, participatif</p>
+                <div class="principle">
+                    <span class="icon">🤝</span>
+                    <h4>Participation</h4>
+                    <p>Ouvert à tous, code modifiable, gouvernance collective</p>
                 </div>
             </div>
+            
+            <h3>🛠️ Comment Participer ?</h3>
+            <p>
+                Ce projet est <strong>open source</strong> et ouvert à toutes les contributions :
+            </p>
+            <ul>
+                <li><strong>Citoyens</strong> : Votez, partagez, donnez votre avis</li>
+                <li><strong>Développeurs</strong> : Contribuez au code, proposez des améliorations</li>
+                <li><strong>Juristes</strong> : Aidez à comprendre les textes législatifs</li>
+                <li><strong>Communicants</strong> : Faites connaître la plateforme</li>
+                <li><strong>Analystes</strong> : Étudiez les données, proposez des visualisations</li>
+            </ul>
             
             <div class="participation-cta">
                 <h3>Vous voulez participer ?</h3>
@@ -180,9 +236,12 @@ require_once __DIR__ . '/config/config.php';
                         📧 Me contacter
                     </a>
                     <a href="https://github.com/constituant" class="btn-secondary" target="_blank" rel="noopener">
-                        💻 Voir le code
+                        💻 Voir le code source
                     </a>
                 </div>
+                <p class="disclaimer">
+                    <em>Ce projet est indépendant, non-partisan, et entièrement bénévole.</em>
+                </p>
             </div>
         </div>
     </div>
