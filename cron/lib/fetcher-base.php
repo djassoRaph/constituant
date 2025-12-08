@@ -17,6 +17,7 @@ if (!defined('CONSTITUANT_APP')) {
 require_once __DIR__ . '/../../public_html/config/config.php';
 require_once __DIR__ . '/../../public_html/config/database.php';
 require_once __DIR__ . '/../../public_html/config/sources.php';
+require_once __DIR__ . '/../../public_html/includes/mistral_ai.php';
 
 // Set timezone
 date_default_timezone_set(IMPORT_SETTINGS['timezone']);
@@ -148,6 +149,43 @@ function savePendingBill(array $billData): array
                 ];
             }
 
+            // AI Classification for updated bill (only if not already classified)
+            $theme = null;
+            $aiSummary = null;
+            $aiProcessedAt = null;
+
+            // Check if bill was already AI-processed
+            $checkAI = dbQuery(
+                "SELECT theme, ai_processed_at FROM pending_bills WHERE id = :id",
+                [':id' => $existing['id']]
+            )->fetch();
+
+            // Only re-classify if never classified before or theme is 'Sans catégorie'
+            if (empty($checkAI['ai_processed_at']) || $checkAI['theme'] === 'Sans catégorie') {
+                if (!empty($billData['full_text_url'])) {
+                    logMessage("Re-fetching for AI classification (update): {$billData['full_text_url']}");
+                    $fullTextContent = fetchFullTextContent($billData['full_text_url']);
+
+                    if (!empty($fullTextContent) || !empty($billData['summary'])) {
+                        logMessage("Calling Mistral AI for updated bill...");
+                        $aiResult = classifyBillWithAI(
+                            $billData['title'],
+                            $billData['summary'] ?? '',
+                            $fullTextContent
+                        );
+
+                        if ($aiResult['error'] === null) {
+                            $theme = $aiResult['theme'];
+                            $aiSummary = $aiResult['summary'];
+                            $aiProcessedAt = 'NOW()';
+                            logMessage("AI re-classified as: $theme");
+                        } else {
+                            logMessage("AI re-classification failed: {$aiResult['error']}", 'WARNING');
+                        }
+                    }
+                }
+            }
+
             // Update existing pending bill
             $updateQuery = "
                 UPDATE pending_bills SET
@@ -158,11 +196,12 @@ function savePendingBill(array $billData): array
                     chamber = :chamber,
                     vote_datetime = :vote_datetime,
                     raw_data = :raw_data,
-                    fetched_at = CURRENT_TIMESTAMP
+                    fetched_at = CURRENT_TIMESTAMP"
+                    . ($theme !== null ? ", theme = :theme, ai_summary = :ai_summary, ai_processed_at = NOW()" : "") . "
                 WHERE id = :id
             ";
 
-            dbQuery($updateQuery, [
+            $params = [
                 ':id' => $existing['id'],
                 ':title' => $billData['title'],
                 ':summary' => $billData['summary'] ?? null,
@@ -171,7 +210,14 @@ function savePendingBill(array $billData): array
                 ':chamber' => $billData['chamber'] ?? IMPORT_SETTINGS['default_chambers'][$billData['level']] ?? null,
                 ':vote_datetime' => $billData['vote_datetime'] ?? null,
                 ':raw_data' => isset($billData['raw_data']) ? json_encode($billData['raw_data']) : null,
-            ]);
+            ];
+
+            if ($theme !== null) {
+                $params[':theme'] = $theme;
+                $params[':ai_summary'] = $aiSummary;
+            }
+
+            dbQuery($updateQuery, $params);
 
             return [
                 'success' => true,
@@ -180,14 +226,45 @@ function savePendingBill(array $billData): array
             ];
         }
 
+        // AI Classification for new bill
+        $theme = 'Sans catégorie';
+        $aiSummary = null;
+        $aiProcessedAt = null;
+
+        // Attempt to classify with AI
+        if (!empty($billData['full_text_url'])) {
+            logMessage("Fetching full text for AI classification from: {$billData['full_text_url']}");
+            $fullTextContent = fetchFullTextContent($billData['full_text_url']);
+
+            if (!empty($fullTextContent) || !empty($billData['summary'])) {
+                logMessage("Calling Mistral AI for classification...");
+                $aiResult = classifyBillWithAI(
+                    $billData['title'],
+                    $billData['summary'] ?? '',
+                    $fullTextContent
+                );
+
+                if ($aiResult['error'] === null) {
+                    $theme = $aiResult['theme'];
+                    $aiSummary = $aiResult['summary'];
+                    $aiProcessedAt = 'NOW()';
+                    logMessage("AI classified as: $theme");
+                } else {
+                    logMessage("AI classification failed: {$aiResult['error']}", 'WARNING');
+                }
+            }
+        }
+
         // Insert new pending bill
         $insertQuery = "
             INSERT INTO pending_bills (
                 external_id, source, title, summary, full_text_url,
-                level, chamber, vote_datetime, raw_data, status
+                level, chamber, vote_datetime, theme, ai_summary,
+                ai_processed_at, raw_data, status
             ) VALUES (
                 :external_id, :source, :title, :summary, :full_text_url,
-                :level, :chamber, :vote_datetime, :raw_data, 'pending'
+                :level, :chamber, :vote_datetime, :theme, :ai_summary,
+                " . ($aiProcessedAt ?? 'NULL') . ", :raw_data, 'pending'
             )
         ";
 
@@ -200,6 +277,8 @@ function savePendingBill(array $billData): array
             ':level' => $billData['level'],
             ':chamber' => $billData['chamber'] ?? IMPORT_SETTINGS['default_chambers'][$billData['level']] ?? null,
             ':vote_datetime' => $billData['vote_datetime'] ?? null,
+            ':theme' => $theme,
+            ':ai_summary' => $aiSummary,
             ':raw_data' => isset($billData['raw_data']) ? json_encode($billData['raw_data']) : null,
         ]);
 
@@ -270,11 +349,20 @@ function logMessage(string $message, string $level = 'INFO'): void
     $logFile = __DIR__ . '/../../' . IMPORT_SETTINGS['log_file'];
     $logDir = dirname($logFile);
 
+    // Ensure log directory exists
     if (!is_dir($logDir)) {
-        @mkdir($logDir, 0755, true);
+        if (!@mkdir($logDir, 0755, true)) {
+            error_log("Failed to create log directory: $logDir");
+            return;
+        }
     }
 
-    @file_put_contents($logFile, $logEntry, FILE_APPEND | LOCK_EX);
+    // Write to log file with error handling
+    $result = @file_put_contents($logFile, $logEntry, FILE_APPEND | LOCK_EX);
+
+    if ($result === false) {
+        error_log("Failed to write to log file: $logFile (check permissions)");
+    }
 
     // Also log to PHP error log for important messages
     if (in_array($level, ['ERROR', 'WARNING'])) {
@@ -375,5 +463,62 @@ function autoUpdateBillStatus(): int
     } catch (Exception $e) {
         logMessage("Auto-update status failed: " . $e->getMessage(), 'ERROR');
         return 0;
+    }
+}
+
+/**
+ * Fetch full text content from URL
+ * Handles HTML and attempts to extract readable text
+ *
+ * @param string|null $url URL to fetch full text from
+ * @param int $maxLength Maximum length in characters (default 50000)
+ * @return string Full text content or empty string
+ */
+function fetchFullTextContent(?string $url, int $maxLength = 50000): string
+{
+    if (empty($url)) {
+        return '';
+    }
+
+    try {
+        // Fetch the content
+        $result = fetchUrl($url, [
+            CURLOPT_TIMEOUT => 20,
+            CURLOPT_HTTPHEADER => [
+                'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Accept-Language: fr-FR,fr;q=0.9,en;q=0.8',
+            ],
+        ]);
+
+        if (!$result['success']) {
+            logMessage("Failed to fetch full text from $url: {$result['error']}", 'WARNING');
+            return '';
+        }
+
+        $content = $result['data'];
+
+        // Check content type - skip PDFs for now (would need PDF parser)
+        if (stripos($content, '%PDF-') === 0) {
+            logMessage("Skipping PDF content from $url (PDF parsing not yet implemented)", 'INFO');
+            return '';
+        }
+
+        // Strip HTML tags to get plain text
+        $text = strip_tags($content);
+
+        // Clean up whitespace
+        $text = preg_replace('/\s+/', ' ', trim($text));
+
+        // Truncate to max length
+        if (mb_strlen($text) > $maxLength) {
+            $text = mb_substr($text, 0, $maxLength);
+            logMessage("Full text truncated from " . mb_strlen($content) . " to $maxLength chars", 'INFO');
+        }
+
+        return $text;
+
+    } catch (Exception $e) {
+        logMessage("Exception fetching full text from $url: " . $e->getMessage(), 'WARNING');
+        return '';
     }
 }

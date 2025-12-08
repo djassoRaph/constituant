@@ -24,7 +24,7 @@ const BILL_SOURCES = [
         'base_url' => 'https://www.nosdeputes.fr',
         'endpoints' => [
             'dossiers' => '/dossiers/date/json',
-            'scrutins' => '/17/scrutins/json', // 17 = current legislature
+            'scrutins' => '/16/scrutins/json', // 16 = current legislature (2022-2027)
             'search' => '/recherche/projets?format=json',
         ],
         'rate_limit' => [
@@ -54,7 +54,7 @@ const BILL_SOURCES = [
 
     'eu-parliament' => [
         'name' => 'European Parliament - Legislative Observatory',
-        'enabled' => true,
+        'enabled' => false, // Temporarily disabled - API returns low-level documents (amendments)
         'priority' => 3,
         'level' => 'eu',
         'base_url' => 'https://data.europarl.europa.eu',
@@ -103,7 +103,7 @@ const IMPORT_SETTINGS = [
     'timezone' => 'Europe/Paris',
 
     // Log file location (relative to project root)
-    'log_file' => '../logs/bill-imports.log',
+    'log_file' => 'logs/bill-imports.log',
 
     // Email notifications
     'notify_admin' => false, // Set to true to enable

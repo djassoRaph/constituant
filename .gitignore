@@ -112,13 +112,16 @@ tests/_output/
 coverage/
 
 # ============================================================================
-# Security
+# Security & API Keys
 # ============================================================================
 *.pem
 *.key
 *.cert
 *.crt
 secrets.json
+
+# API Keys - NEVER commit these!
+public_html/config/api-keys.php
 
 # ============================================================================
 # OS Generated
@@ -145,4 +148,5 @@ Thumbs.db
 # ============================================================================
 !public_html/config/database.example.php
 !public_html/config/config.example.php
+!public_html/config/api-keys.example.php
 !.gitkeep

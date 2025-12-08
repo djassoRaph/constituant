@@ -16,21 +16,27 @@
 }
 
 :root {
-    /* Color Palette */
-    --color-primary: #2E5090;
-    --color-secondary: #E63946;
+    /* DSFR-inspired Color Palette */
+    --color-primary: #000091; /* French government blue */
+    --color-primary-hover: #1212FF;
+    --color-secondary: #6A6AF4; /* Secondary blue */
+    --color-success: #18753C; /* Success green */
+    --color-warning: #FF9940; /* Warning orange */
+    --color-error: #CE0500; /* Error red */
+
+    /* Neutral colors */
+    --color-bg: #F6F6F6;
+    --color-white: #FFFFFF;
+    --color-text: #161616;
+    --color-text-light: #666666;
+    --color-border: #E5E5E5;
+    --color-border-dark: #DDDDDD;
+
+    /* Legacy (for compatibility) */
     --color-eu: #003399;
     --color-eu-accent: #FFD700;
     --color-france: #0055A4;
     --color-france-accent: #E63946;
-    --color-bg: #F8F9FA;
-    --color-text: #212529;
-    --color-text-light: #6c757d;
-    --color-border: #dee2e6;
-    --color-white: #ffffff;
-    --color-success: #28a745;
-    --color-error: #dc3545;
-    --color-warning: #ffc107;
 
     /* Typography */
     --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -49,6 +55,7 @@
     --radius-sm: 4px;
     --radius-md: 8px;
     --radius-lg: 12px;
+    --radius-pill: 20px;
 
     /* Shadows */
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -324,6 +331,67 @@ code {
     margin-bottom: var(--spacing-lg);
 }
 
+.theme-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-md);
+    background: var(--color-primary);
+    color: var(--color-white);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--spacing-md);
+}
+
+/* Theme badge colors */
+.theme-badge[data-theme="Économie & Finances"] { background: #4A90E2; }
+.theme-badge[data-theme="Travail & Emploi"] { background: #F39C12; }
+.theme-badge[data-theme="Santé"] { background: #E74C3C; }
+.theme-badge[data-theme="Éducation"] { background: #9B59B6; }
+.theme-badge[data-theme="Justice"] { background: #34495E; }
+.theme-badge[data-theme="Sécurité & Défense"] { background: #C0392B; }
+.theme-badge[data-theme="Environnement & Énergie"] { background: #27AE60; }
+.theme-badge[data-theme="Transports & Infrastructures"] { background: #16A085; }
+.theme-badge[data-theme="Agriculture"] { background: #7D8B39; }
+.theme-badge[data-theme="Culture & Communication"] { background: #E91E63; }
+.theme-badge[data-theme="Affaires sociales"] { background: #FF9800; }
+.theme-badge[data-theme="Numérique"] { background: #00BCD4; }
+.theme-badge[data-theme="Affaires européennes"] { background: #003399; }
+.theme-badge[data-theme="Institutions"] { background: #5C6BC0; }
+.theme-badge[data-theme="Sans catégorie"] { background: var(--color-text-light); }
+
+.vote-ended-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--color-border);
+    color: var(--color-text-light);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-md);
+}
+
+.bill-card.vote-ended {
+    opacity: 0.9;
+}
+
+.bill-card.vote-ended .bill-title {
+    color: var(--color-text-light);
+}
+
+.bill-card.vote-ended .vote-btn {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 .bill-meta {
     display: flex;
     gap: var(--spacing-md);
@@ -493,19 +561,20 @@ code {
 .vote-btn {
     flex: 1;
     min-width: 44px;
-    min-height: 44px;
-    padding: var(--spacing-md);
-    border: 2px solid transparent;
+    min-height: 50px;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: none;
     border-radius: var(--radius-md);
     font-family: var(--font-sans);
-    font-weight: 600;
-    font-size: 0.875rem;
+    font-weight: 700;
+    font-size: 1rem;
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all var(--transition-base);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--spacing-xs);
+    gap: var(--spacing-sm);
+    box-shadow: var(--shadow-sm);
 }
 
 .vote-btn:disabled {
@@ -514,11 +583,12 @@ code {
 }
 
 .vote-btn:not(:disabled):hover {
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: var(--shadow-md);
 }
 
 .vote-btn:not(:disabled):active {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
 }
 
 .vote-btn.for {
@@ -527,7 +597,7 @@ code {
 }
 
 .vote-btn.for:not(:disabled):hover {
-    background: #218838;
+    background: #0E5A2A;
 }
 
 .vote-btn.against {
@@ -536,7 +606,7 @@ code {
 }
 
 .vote-btn.against:not(:disabled):hover {
-    background: #c82333;
+    background: #A00400;
 }
 
 .vote-btn.abstain {
@@ -545,7 +615,7 @@ code {
 }
 
 .vote-btn.abstain:not(:disabled):hover {
-    background: #5a6268;
+    background: #4A4A4A;
 }
 
 .vote-btn.voted {
@@ -576,6 +646,231 @@ code {
     border-radius: var(--radius-sm);
     text-align: center;
     font-weight: 600;
+}
+
+/* ============================================================================
+   Tabs
+   ========================================================================== */
+
+.tabs-container {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+    border-bottom: 2px solid var(--color-border);
+}
+
+.tab-button {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-light);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    position: relative;
+    min-height: 60px;
+}
+
+.tab-button:hover {
+    color: var(--color-primary);
+    background: rgba(0, 0, 145, 0.05);
+}
+
+.tab-button.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+    background: rgba(0, 0, 145, 0.08);
+}
+
+.tab-button:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.tab-icon {
+    font-size: 1.25em;
+}
+
+.tab-label {
+    display: none;
+}
+
+.tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 var(--spacing-xs);
+    background: var(--color-border);
+    color: var(--color-text-light);
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.tab-button.active .tab-count {
+    background: var(--color-primary);
+    color: var(--color-white);
+}
+
+/* Show labels on larger screens */
+@media (min-width: 480px) {
+    .tab-label {
+        display: inline;
+    }
+}
+
+/* ============================================================================
+   Theme Slider
+   ========================================================================== */
+
+.theme-slider-container {
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-md) 0;
+}
+
+.theme-slider {
+    display: flex;
+    gap: var(--spacing-sm);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+    padding: var(--spacing-sm) 0;
+}
+
+.theme-slider::-webkit-scrollbar {
+    height: 6px;
+}
+
+.theme-slider::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.theme-slider::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 3px;
+}
+
+.theme-slider::-webkit-scrollbar-thumb:hover {
+    background: var(--color-border-dark);
+}
+
+.theme-pill {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background: var(--color-white);
+    border: 2px solid var(--color-border-dark);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    scroll-snap-align: start;
+    min-height: 44px;
+    white-space: nowrap;
+}
+
+.theme-pill:hover {
+    border-color: var(--color-primary);
+    background: rgba(0, 0, 145, 0.05);
+    transform: translateY(-1px);
+}
+
+.theme-pill.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+.theme-pill:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.theme-pill-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.theme-pill.active .theme-pill-count {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Theme color accents */
+.theme-pill[data-theme="Économie & Finances"] { border-color: #4A90E2; }
+.theme-pill[data-theme="Travail & Emploi"] { border-color: #F39C12; }
+.theme-pill[data-theme="Santé"] { border-color: #E74C3C; }
+.theme-pill[data-theme="Éducation"] { border-color: #9B59B6; }
+.theme-pill[data-theme="Justice"] { border-color: #34495E; }
+.theme-pill[data-theme="Sécurité & Défense"] { border-color: #C0392B; }
+.theme-pill[data-theme="Environnement & Énergie"] { border-color: #27AE60; }
+.theme-pill[data-theme="Transports & Infrastructures"] { border-color: #16A085; }
+.theme-pill[data-theme="Agriculture"] { border-color: #7D8B39; }
+.theme-pill[data-theme="Culture & Communication"] { border-color: #E91E63; }
+.theme-pill[data-theme="Affaires sociales"] { border-color: #FF9800; }
+.theme-pill[data-theme="Numérique"] { border-color: #00BCD4; }
+.theme-pill[data-theme="Affaires européennes"] { border-color: #003399; }
+.theme-pill[data-theme="Institutions"] { border-color: #5C6BC0; }
+
+.theme-pill[data-theme="Économie & Finances"]:hover,
+.theme-pill[data-theme="Économie & Finances"].active { background: #4A90E2; border-color: #4A90E2; color: white; }
+.theme-pill[data-theme="Travail & Emploi"]:hover,
+.theme-pill[data-theme="Travail & Emploi"].active { background: #F39C12; border-color: #F39C12; color: white; }
+.theme-pill[data-theme="Santé"]:hover,
+.theme-pill[data-theme="Santé"].active { background: #E74C3C; border-color: #E74C3C; color: white; }
+.theme-pill[data-theme="Éducation"]:hover,
+.theme-pill[data-theme="Éducation"].active { background: #9B59B6; border-color: #9B59B6; color: white; }
+.theme-pill[data-theme="Justice"]:hover,
+.theme-pill[data-theme="Justice"].active { background: #34495E; border-color: #34495E; color: white; }
+.theme-pill[data-theme="Sécurité & Défense"]:hover,
+.theme-pill[data-theme="Sécurité & Défense"].active { background: #C0392B; border-color: #C0392B; color: white; }
+.theme-pill[data-theme="Environnement & Énergie"]:hover,
+.theme-pill[data-theme="Environnement & Énergie"].active { background: #27AE60; border-color: #27AE60; color: white; }
+.theme-pill[data-theme="Transports & Infrastructures"]:hover,
+.theme-pill[data-theme="Transports & Infrastructures"].active { background: #16A085; border-color: #16A085; color: white; }
+.theme-pill[data-theme="Agriculture"]:hover,
+.theme-pill[data-theme="Agriculture"].active { background: #7D8B39; border-color: #7D8B39; color: white; }
+.theme-pill[data-theme="Culture & Communication"]:hover,
+.theme-pill[data-theme="Culture & Communication"].active { background: #E91E63; border-color: #E91E63; color: white; }
+.theme-pill[data-theme="Affaires sociales"]:hover,
+.theme-pill[data-theme="Affaires sociales"].active { background: #FF9800; border-color: #FF9800; color: white; }
+.theme-pill[data-theme="Numérique"]:hover,
+.theme-pill[data-theme="Numérique"].active { background: #00BCD4; border-color: #00BCD4; color: white; }
+.theme-pill[data-theme="Affaires européennes"]:hover,
+.theme-pill[data-theme="Affaires européennes"].active { background: #003399; border-color: #003399; color: white; }
+.theme-pill[data-theme="Institutions"]:hover,
+.theme-pill[data-theme="Institutions"].active { background: #5C6BC0; border-color: #5C6BC0; color: white; }
+
+/* ============================================================================
+   Bills Container
+   ========================================================================== */
+
+.bills-container {
+    margin-top: var(--spacing-xl);
 }
 
 /* ============================================================================

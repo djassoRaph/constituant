@@ -142,26 +142,48 @@ function fetchEUDocuments(array $config): array
 
     logMessage("Fetching from EU API: $url");
 
+    // IMPORTANT: EU Parliament API requires 'application/ld+json' (not 'application/json')
     $result = fetchUrl($url, [
         CURLOPT_HTTPHEADER => [
-            'Accept: application/json',
+            'Accept: application/ld+json',
             'Accept-Language: en',
         ],
     ], 0);
 
     if (!$result['success']) {
         logMessage("EU API request failed: " . $result['error'], 'ERROR');
-        // Fallback to RSS feed if API fails
-        return fetchEURssFeed($config);
+
+        // Try simplified endpoint without parameters
+        logMessage("Trying simplified EU API endpoint...");
+        $simpleUrl = $config['base_url'] . '/api/v2/documents?limit=50';
+        $result = fetchUrl($simpleUrl, [
+            CURLOPT_HTTPHEADER => [
+                'Accept: application/ld+json',
+            ],
+        ], 0);
+
+        if (!$result['success']) {
+            logMessage("Simplified endpoint also failed, giving up on EU Parliament", 'ERROR');
+            return [];
+        }
     }
 
     $parsed = parseJson($result['data']);
     if (!$parsed['success']) {
         logMessage("EU API parse failed: " . $parsed['error'], 'ERROR');
-        return fetchEURssFeed($config);
+        return [];
     }
 
-    return $parsed['data']['data'] ?? $parsed['data']['items'] ?? [];
+    // Extract documents from response (LD+JSON format has 'data' array)
+    $documents = $parsed['data']['data'] ?? $parsed['data']['items'] ?? $parsed['data'] ?? [];
+
+    if (is_array($documents)) {
+        logMessage("Successfully extracted " . count($documents) . " documents from EU API");
+        return $documents;
+    }
+
+    logMessage("EU API response has unexpected structure", 'WARNING');
+    return [];
 }
 
 /**
@@ -228,16 +250,43 @@ function fetchEURssFeed(array $config): array
  */
 function extractEUBillData(array $document, string $source): ?array
 {
-    // Handle both API and RSS formats
-    $title = $document['title'] ?? $document['label'] ?? null;
+    // LD+JSON format from EU API:
+    // - id: URI identifier
+    // - type: "Work"
+    // - work_type: document type URI
+    // - identifier: string identifier
+    // May not have 'title' directly - skip documents without enough info
+
+    // Try various title fields
+    $title = $document['title'] ??
+             $document['label'] ??
+             $document['identifier'] ??
+             null;
+
+    // If no title, try to construct from identifier
+    if (empty($title) && isset($document['id'])) {
+        // Use the last part of the ID as title
+        $idParts = explode('/', $document['id']);
+        $title = end($idParts);
+    }
 
     if (empty($title)) {
-        logMessage("Skipping EU document without title", 'WARNING');
+        // Skip documents without usable titles
         return null;
     }
 
+    // Skip certain document types that aren't legislative bills
+    if (isset($document['work_type'])) {
+        $workType = $document['work_type'];
+        // Skip amendments and amendment lists (too granular)
+        if (stripos($workType, 'AMENDMENT_LIST') !== false ||
+            stripos($workType, 'AMENDMENT') !== false) {
+            return null;
+        }
+    }
+
     // Extract ID
-    $externalId = $document['id'] ?? $document['reference'] ?? $document['guid'] ?? md5($title);
+    $externalId = $document['identifier'] ?? $document['id'] ?? md5($title);
 
     // Extract summary/description
     $summary = $document['description'] ?? $document['summary'] ?? null;

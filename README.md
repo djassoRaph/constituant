@@ -1,20 +1,25 @@
-# 🏛️ Constituant MVP
+# 🏛️ Constituant
 
-**Votre voix sur les lois du jour** - A civic engagement platform that allows French and EU citizens to vote on legislation being debated in the European Parliament and French National Assembly.
+**Votre voix sur les lois du jour** - A modern civic engagement platform that allows French and EU citizens to vote anonymously on real legislation, with AI-powered classification and automatic bill imports.
 
-![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)
+![Version](https://img.shields.io/badge/version-0.2.0-blue.svg)
 ![PHP](https://img.shields.io/badge/PHP-8.0%2B-blue.svg)
 ![License](https://img.shields.io/badge/license-AGPL--3.0-green.svg)
+![AI](https://img.shields.io/badge/AI-Mistral-orange.svg)
 
 ## 📋 Table of Contents
 
 - [Overview](#overview)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
+- [Quick Start](#quick-start)
 - [Installation](#installation)
 - [Configuration](#configuration)
+- [AI Classification](#ai-classification)
+- [Bill Import System](#bill-import-system)
 - [Project Structure](#project-structure)
 - [API Documentation](#api-documentation)
+- [Frontend](#frontend)
 - [Admin Panel](#admin-panel)
 - [Security](#security)
 - [Troubleshooting](#troubleshooting)
@@ -23,198 +28,400 @@
 
 ## 🎯 Overview
 
-Constituant is a lightweight civic engagement web application that enables citizens to:
-- View current legislative bills from EU Parliament and French National Assembly
-- Cast their opinion (For, Against, Abstain) on each bill
-- See real-time aggregate voting results
-- Access full legislative texts
+Constituant is a comprehensive civic engagement platform that enables French and EU citizens to participate in democracy by:
 
-The platform is designed with a **mobile-first** approach and uses progressive enhancement for an optimal experience across all devices.
+- Viewing current and past legislative bills from official sources
+- Casting anonymous votes (For, Against, Abstain) on legislation
+- Seeing real-time aggregate voting results
+- Filtering bills by AI-classified themes (Santé, Justice, Économie, etc.)
+- Accessing AI-generated plain-language summaries
+- Tracking bills from France and EU institutions
+
+**NEW in v0.2.0:**
+- 🤖 **AI-Powered Classification** using Mistral AI
+- 📥 **Automatic Bill Imports** from NosDéputés, La Fabrique de la Loi
+- 🎨 **DSFR-Inspired Design** (French Government Design System)
+- 📱 **Tabbed Interface** with Active/Past votes
+- 🏷️ **Theme-Based Filtering** with horizontal slider
+- 🇫🇷 **France-First Ordering** in bill displays
 
 ## ✨ Features
 
-### Core Features
-- **Real-time Voting**: Cast votes on current legislation with instant feedback
-- **Aggregate Results**: See voting statistics with visual progress bars
-- **Dual Legislative Tracking**: Follow both EU and French legislation
-- **Mobile-First Design**: Optimized for smartphones, scales beautifully to desktop
-- **Anonymous Voting**: IP-based vote tracking (one vote per IP per bill)
-- **Urgency Indicators**: Visual badges for urgent votes (today, this week)
-- **Direct Access**: Links to official legislative texts
+### Core Features (v0.2.0)
 
-### Technical Features
-- **Progressive Enhancement**: Works without JavaScript (basic functionality)
-- **Responsive Design**: Single codebase from 320px to 4K displays
-- **Accessibility**: WCAG 2.1 AA compliant with ARIA labels
-- **Dark Mode**: Automatic theme switching based on system preferences
-- **Fast Performance**: < 2s load time on 3G, optimized assets
-- **SEO Optimized**: Semantic HTML, meta tags, and structured data
-- **Rate Limiting**: Protection against vote spam (10 votes/hour per IP)
-- **Admin Panel**: Simple interface to manage bills
+#### Voting & Engagement
+- ✅ Real-time voting on current legislation
+- ✅ Anonymous IP-based tracking (one vote per bill)
+- ✅ Live aggregate results with progress bars
+- ✅ Vote history preservation
+- ✅ Dual legislative tracking (France + EU)
+
+#### AI-Powered Classification 🤖
+- ✅ **Automatic theme classification** into 15 categories:
+  - Économie & Finances
+  - Travail & Emploi
+  - Santé
+  - Éducation
+  - Justice
+  - Sécurité & Défense
+  - Environnement & Énergie
+  - Transports & Infrastructures
+  - Agriculture
+  - Culture & Communication
+  - Affaires sociales
+  - Numérique
+  - Affaires européennes
+  - Institutions
+  - Sans catégorie
+- ✅ **Plain-language summaries** via Mistral AI
+- ✅ Background AI processing during import
+
+#### Automatic Bill Imports 📥
+- ✅ **NosDéputés.fr** - Assemblée Nationale dossiers
+- ✅ **La Fabrique de la Loi** - 1,500+ legislative files
+- ✅ **EU Parliament** (optional) - European legislation
+- ✅ Scheduled cron imports (configurable)
+- ✅ Duplicate detection and smart updates
+- ✅ AI classification during import
+
+#### Modern Frontend 🎨
+- ✅ **Tabbed interface**: "Lois en cours" / "Votes passés"
+- ✅ **Theme slider**: Horizontal scrollable filter pills
+- ✅ **France-first ordering**: National bills before EU
+- ✅ **DSFR colors**: French Government design system
+- ✅ **Mobile-first responsive**: 320px to 4K
+- ✅ **Theme badges**: Color-coded by legislative category
+- ✅ **Vote ended state**: Disabled buttons for past votes
+- ✅ **Empty states**: Friendly messages when no bills match
+
+#### Technical Features
+- ✅ Progressive enhancement (works without JS)
+- ✅ Client-side filtering (instant, no page reload)
+- ✅ Accessibility (WCAG 2.1 AA, ARIA labels)
+- ✅ Rate limiting (10 votes/hour per IP)
+- ✅ SEO optimized (semantic HTML, meta tags)
+- ✅ Performance: <2s load time on 3G
+- ✅ Secure API key management
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: Vanilla HTML5, CSS3, JavaScript (ES6+)
-- **Backend**: PHP 8.0+
-- **Database**: MySQL 5.7+ / MariaDB 10.2+
-- **Server**: Apache 2.4+ (O2switch shared hosting optimized)
-- **No Frameworks**: Pure vanilla code for maximum performance and minimal dependencies
+**Frontend:**
+- Vanilla HTML5, CSS3, JavaScript (ES6+)
+- DSFR-inspired design system
+- Mobile-first responsive design
+- No frameworks (pure vanilla code)
+
+**Backend:**
+- PHP 8.0+
+- MySQL 5.7+ / MariaDB 10.2+
+- RESTful APIs
+- PDO prepared statements
+
+**AI & Automation:**
+- **Mistral AI** (mistral-small-latest) for classification
+- Cron-based bill import system
+- Background AI processing
+
+**Server:**
+- Apache 2.4+ (O2switch shared hosting optimized)
+- mod_rewrite for clean URLs
+- gzip compression, browser caching
+
+## 🚀 Quick Start
+
+```bash
+# 1. Clone repository
+git clone https://github.com/djassoRaph/constituant.git
+cd constituant
+
+# 2. Copy config templates
+cp public_html/config/database.example.php public_html/config/database.php
+cp public_html/config/api-keys.example.php public_html/config/api-keys.php
+
+# 3. Edit configs (add your DB credentials and Mistral API key)
+nano public_html/config/database.php
+nano public_html/config/api-keys.php
+
+# 4. Create database and run migrations
+mysql -u username -p database_name < database/schema.sql
+mysql -u username -p database_name < database/migrations/add_ai_classification_columns.sql
+mysql -u username -p database_name < database/migrations/add_ai_classification_to_bills.sql
+
+# 5. Import bills
+php cron/fetch-bills.php
+
+# 6. Visit http://localhost/constituant/public_html/
+```
+
+**See [SETUP.md](SETUP.md) for detailed setup instructions.**
 
 ## 📦 Installation
 
 ### Prerequisites
 
-- PHP 8.0 or higher
+- PHP 8.0+ with PDO, cURL, JSON extensions
 - MySQL 5.7+ or MariaDB 10.2+
-- Apache with mod_rewrite enabled
-- Composer (optional, for future dependencies)
+- Apache with mod_rewrite
+- **Mistral AI API key** (get from https://console.mistral.ai/)
+- Cron access (for automatic imports)
 
-### Step 1: Upload Files
+### Detailed Steps
 
-Upload the contents of the `public_html` directory to your web server's public directory (typically `public_html` or `www`).
+1. **Upload Files**
+   ```bash
+   # Upload public_html/ contents to your web root
+   # For O2switch: /home/YOUR_USERNAME/public_html/
+   ```
 
-For **O2switch**:
-```bash
-# Via FTP/SFTP, upload to:
-/home/YOUR_USERNAME/public_html/
-```
+2. **Create Database**
+   ```sql
+   CREATE DATABASE constituant CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+   CREATE USER 'constituant_user'@'localhost' IDENTIFIED BY 'strong_password';
+   GRANT ALL PRIVILEGES ON constituant.* TO 'constituant_user'@'localhost';
+   FLUSH PRIVILEGES;
+   ```
 
-### Step 2: Create Database
+3. **Import Schema**
+   ```bash
+   mysql -u constituant_user -p constituant < database/schema.sql
+   mysql -u constituant_user -p constituant < database/migrations/add_ai_classification_columns.sql
+   mysql -u constituant_user -p constituant < database/migrations/add_ai_classification_to_bills.sql
+   ```
 
-1. Log in to your cPanel
-2. Go to **MySQL Databases**
-3. Create a new database (e.g., `constituant`)
-4. Create a database user and grant all privileges
-5. Note down: database name, username, and password
+4. **Configure Database** (`public_html/config/database.php`)
+   ```php
+   define('DB_HOST', 'localhost');
+   define('DB_NAME', 'constituant');
+   define('DB_USER', 'constituant_user');
+   define('DB_PASS', 'your_password');
+   ```
 
-### Step 3: Import Database Schema
+5. **Configure API Keys** (`public_html/config/api-keys.php`)
+   ```php
+   define('MISTRAL_API_KEY', 'your-mistral-api-key-here');
+   ```
 
-1. Go to **phpMyAdmin** in cPanel
-2. Select your database
-3. Click **Import** tab
-4. Choose `database/schema.sql`
-5. Click **Go**
+6. **Set Admin Password** (`public_html/config/config.php`)
+   ```php
+   define('ADMIN_PASSWORD', 'your_secure_password');
+   ```
 
-The schema will create two tables (`bills` and `votes`) and insert sample data for testing.
+7. **Set Permissions**
+   ```bash
+   chmod 755 public_html/
+   chmod 755 logs/
+   chmod 644 public_html/config/*.php
+   ```
 
-### Step 4: Configure Database Connection
-
-Edit `public_html/config/database.php`:
-
-```php
-const DB_HOST = 'localhost';     // Usually 'localhost' for shared hosting
-const DB_NAME = 'constituant';    // Your database name
-const DB_USER = 'constituant_user';   // Your database username
-const DB_PASS = 'Dev_Password123!';  // Your database password
-```
-
-### Step 5: Set Admin Password
-
-Edit `public_html/config/config.php`:
-
-```php
-define('ADMIN_PASSWORD', 'your_secure_password_here');
-```
-
-**⚠️ IMPORTANT**: Change this from the default `constituant2024` immediately!
-
-### Step 6: Configure Site URL
-
-Edit `public_html/config/config.php`:
-
-```php
-define('SITE_URL', 'https://constituant.fr'); // Your actual domain
-```
-
-### Step 7: Set File Permissions
-
-```bash
-# Make sure PHP can write logs (if needed)
-chmod 755 public_html/
-chmod 644 public_html/*.php
-chmod 644 public_html/config/*.php
-chmod 644 public_html/api/*.php
-```
-
-### Step 8: Test Installation
-
-1. Visit your domain: `https://yourdomain.com`
-2. You should see the landing page with sample bills
-3. Test voting on a bill
-4. Visit `/admin/` and log in with your admin password
+8. **Test Installation**
+   - Visit: `https://yourdomain.com`
+   - Admin: `https://yourdomain.com/admin/`
+   - Test vote on a bill
 
 ## ⚙️ Configuration
 
-### Environment Variables (Optional)
+### API Keys (`public_html/config/api-keys.php`)
 
-For enhanced security, move sensitive config to environment variables:
+**⚠️ IMPORTANT:** This file is excluded from Git (.gitignore)
 
-Create `public_html/.env` (outside public directory if possible):
-```env
-DB_HOST=localhost
-DB_NAME=constituant
-DB_USER=constituant_user
-DB_PASS=Dev_Password123!
-ADMIN_PASSWORD=your_admin_password
+```php
+// Mistral AI API Key (required for AI classification)
+define('MISTRAL_API_KEY', 'your-mistral-api-key-here');
+define('MISTRAL_MODEL', 'mistral-small-latest');
+```
+
+Get your API key: https://console.mistral.ai/
+
+### Bill Sources (`public_html/config/sources.php`)
+
+Enable/disable import sources:
+
+```php
+'lafabrique' => [
+    'enabled' => true,  // 1,530 French bills available
+    'priority' => 2,
+],
+'nosdeputes' => [
+    'enabled' => true,  // ~200 Assemblée bills
+    'priority' => 1,
+],
+'eu-parliament' => [
+    'enabled' => false, // Disabled by default
+    'priority' => 3,
+],
+```
+
+### Import Settings
+
+```php
+'max_bills_per_source' => 50,      // Limit per import run
+'auto_approve' => false,            // Require manual approval
+'fetch_days_back' => 90,            // How far back to fetch
+'timezone' => 'Europe/Paris',
 ```
 
 ### HTTPS Setup
 
-Uncomment these lines in `public_html/.htaccess`:
+Uncomment in `.htaccess`:
 ```apache
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 ```
 
-### CORS Configuration
+## 🤖 AI Classification
 
-If your frontend is on a different domain, enable CORS in `config/config.php`:
-```php
-define('API_CORS_ENABLED', true);
+### How It Works
+
+1. **During Import**:
+   - Bill fetched from source (title, summary, full text URL)
+   - Full text downloaded (HTML stripped, truncated to 50KB)
+   - Sent to Mistral AI with classification prompt
+   - Returns `theme` + `ai_summary`
+   - Stored in database with `ai_processed_at` timestamp
+
+2. **Classification Prompt**:
+   ```
+   Classify this French legislation into ONE category:
+   [15 categories]
+
+   Title: [bill title]
+   Description: [summary]
+   Full Text: [first 3000 chars]
+
+   Return JSON: {"theme": "category", "summary": "2-3 sentence explanation"}
+   ```
+
+3. **Fallback**: If AI fails, defaults to `'Sans catégorie'` and continues import
+
+### Re-Classify Existing Bills
+
+```bash
+# Re-classify 10 bills without AI data
+php cron/reclassify-bills.php --limit=10
+
+# Force re-classify ALL bills
+php cron/reclassify-bills.php --limit=100 --force
 ```
+
+### API Costs
+
+**Mistral AI Pricing** (as of Dec 2024):
+- Model: `mistral-small-latest`
+- ~$0.0002 per bill classification
+- 1,000 bills ≈ $0.20
+
+## 📥 Bill Import System
+
+### Automatic Imports
+
+**Cron Setup** (add to crontab):
+```bash
+# Import bills twice daily at 6 AM and 6 PM
+0 6,18 * * * /usr/bin/php /path/to/constituant/cron/fetch-bills.php
+
+# Re-classify bills daily at 3 AM
+0 3 * * * /usr/bin/php /path/to/constituant/cron/reclassify-bills.php --limit=50
+```
+
+### Manual Import
+
+```bash
+# Import from all enabled sources
+php cron/fetch-bills.php
+
+# Import from specific source
+php cron/sources/lafabrique.php
+php cron/sources/nosdeputes.php
+```
+
+### Import Stats
+
+Check logs:
+```bash
+tail -100 logs/bill-imports.log
+```
+
+Check database:
+```sql
+SELECT source, COUNT(*) as count FROM pending_bills GROUP BY source;
+```
+
+### Data Sources
+
+| Source | Type | Bills | Status |
+|--------|------|-------|--------|
+| **La Fabrique de la Loi** | CSV API | 1,530 | ✅ Working |
+| **NosDéputés.fr** | JSON API | ~200 | ✅ Working |
+| **EU Parliament** | LD+JSON | N/A | ⚠️ Disabled |
+
+**Note:** EU Parliament disabled due to API returning low-level documents (amendments) instead of full bills.
 
 ## 📁 Project Structure
 
 ```
 constituant/
+├── README.md                           # This file
+├── SETUP.md                            # Detailed setup guide
+├── IMPORT_FIXES.md                     # Import troubleshooting
+├── .gitignore                          # Git exclusions
 ├── database/
-│   └── schema.sql              # Database schema and sample data
-├── public_html/                # Web root (upload this to server)
-│   ├── index.php              # Main landing page
-│   ├── .htaccess              # Apache configuration
-│   ├── robots.txt             # SEO and bot rules
-│   ├── admin/
-│   │   └── index.php          # Admin panel
-│   ├── api/
-│   │   ├── get-votes.php      # GET endpoint for bills
-│   │   ├── cast-vote.php      # POST endpoint to vote
-│   │   ├── get-results.php    # GET endpoint for stats
-│   │   └── add-bill.php       # Admin: manage bills
-│   ├── assets/
-│   │   ├── css/
-│   │   │   ├── style.css      # Main styles
-│   │   │   └── mobile.css     # Responsive styles
-│   │   ├── js/
-│   │   │   ├── app.js         # Main app logic
-│   │   │   └── voting.js      # Voting functionality
-│   │   └── images/
-│   │       ├── logo.svg       # Site logo
-│   │       └── flags/         # Country flags
-│   └── config/
-│       ├── database.php       # DB connection
-│       └── config.php         # App configuration
-└── README.md                  # This file
+│   ├── schema.sql                      # Complete DB schema
+│   └── migrations/
+│       ├── add_ai_classification_columns.sql
+│       └── add_ai_classification_to_bills.sql
+├── cron/
+│   ├── fetch-bills.php                 # Main import orchestrator
+│   ├── reclassify-bills.php            # Re-run AI classification
+│   ├── lib/
+│   │   └── fetcher-base.php            # Shared import utilities
+│   ├── sources/
+│   │   ├── lafabrique.php              # La Fabrique fetcher
+│   │   ├── nosdeputes.php              # NosDéputés fetcher
+│   │   └── eu-parliament.php           # EU Parliament fetcher
+│   └── test-*.php                      # Diagnostic scripts
+├── examples/
+│   └── test_mistral_classification.php # AI test script
+├── logs/
+│   └── bill-imports.log                # Import logs
+└── public_html/
+    ├── index.php                       # Main frontend
+    ├── .htaccess                       # Apache config
+    ├── admin/
+    │   ├── index.php                   # Admin panel
+    │   └── pending-bills.php           # Review imports
+    ├── api/
+    │   ├── get-votes.php               # GET bills with votes
+    │   ├── cast-vote.php               # POST vote
+    │   ├── get-results.php             # GET vote stats
+    │   └── add-bill.php                # Admin: manage bills
+    ├── assets/
+    │   ├── css/
+    │   │   ├── style.css               # DSFR-inspired styles
+    │   │   └── mobile.css              # Responsive
+    │   ├── js/
+    │   │   ├── app.js                  # Main logic (tabs, themes)
+    │   │   └── voting.js               # Voting functionality
+    │   └── images/
+    ├── config/
+    │   ├── database.example.php        # DB config template
+    │   ├── database.php                # Your DB credentials (gitignored)
+    │   ├── api-keys.example.php        # API keys template
+    │   ├── api-keys.php                # Your API keys (gitignored)
+    │   ├── config.php                  # App settings
+    │   └── sources.php                 # Import sources config
+    └── includes/
+        └── mistral_ai.php              # AI classification module
 ```
 
 ## 📡 API Documentation
 
 ### GET `/api/get-votes.php`
 
-Get all bills with vote statistics.
+Get bills with vote statistics, themes, and AI summaries.
 
 **Query Parameters:**
-- `level` (optional): Filter by `eu`, `france`, or `all` (default: `all`)
-- `status` (optional): Filter by `upcoming`, `voting_now`, or `completed`
+- `level` (optional): `eu`, `france`, or `all` (default: `all`)
+- `status` (optional): `upcoming`, `voting_now`, `completed`
 
 **Response:**
 ```json
@@ -222,13 +429,15 @@ Get all bills with vote statistics.
   "success": true,
   "bills": [
     {
-      "id": "eu-dsa-2024",
-      "title": "Digital Services Act - Amendment 247",
-      "summary": "...",
-      "full_text_url": "https://...",
-      "level": "eu",
-      "chamber": "European Parliament",
+      "id": "bill-123",
+      "title": "Loi de financement de la sécurité sociale pour 2025",
+      "summary": "Original technical summary...",
+      "ai_summary": "Cette loi organise le budget...",
+      "theme": "Santé",
+      "level": "france",
+      "chamber": "Assemblée Nationale",
       "vote_datetime": "2024-12-15 14:00:00",
+      "vote_datetime_formatted": "15 déc 2024, 14:00",
       "status": "upcoming",
       "urgency": {
         "is_soon": true,
@@ -255,33 +464,30 @@ Get all bills with vote statistics.
 
 ### POST `/api/cast-vote.php`
 
-Cast a vote on a bill.
+Cast a vote on a bill (one per IP).
 
-**Request Body:**
+**Request:**
 ```json
 {
-  "bill_id": "eu-dsa-2024",
+  "bill_id": "bill-123",
   "vote_type": "for"
 }
 ```
 
-**Vote Types:** `for`, `against`, `abstain`
-
-**Response (Success):**
+**Response:**
 ```json
 {
   "success": true,
   "message": "Vote enregistré avec succès",
   "vote": {
-    "bill_id": "eu-dsa-2024",
-    "bill_title": "...",
+    "bill_id": "bill-123",
     "vote_type": "for",
     "action": "created"
   }
 }
 ```
 
-**Response (Error):**
+**Error (Already Voted):**
 ```json
 {
   "success": false,
@@ -289,254 +495,217 @@ Cast a vote on a bill.
 }
 ```
 
-### GET `/api/get-results.php`
+### Full API Docs
 
-Get detailed vote statistics for a specific bill.
+See detailed API documentation at: `/docs/API.md`
 
-**Query Parameters:**
-- `bill_id` (required): Bill ID
+## 🎨 Frontend
 
-**Response:**
-```json
-{
-  "success": true,
-  "bill_id": "eu-dsa-2024",
-  "bill_title": "...",
-  "votes": {
-    "for": 234,
-    "against": 45,
-    "abstain": 21,
-    "total": 300
-  },
-  "percentages": {
-    "for": 78,
-    "against": 15,
-    "abstain": 7
-  },
-  "timeline": [...],
-  "updated_at": "2024-12-05 14:30:00"
-}
-```
+### Features
 
-### POST `/api/add-bill.php` (Admin Only)
+**Tabbed Interface:**
+- "Lois en cours" - Active votes (vote_datetime >= NOW)
+- "Votes passés" - Completed votes (vote_datetime < NOW)
+- Client-side switching (no page reload)
 
-Add, update, or delete bills.
+**Theme Slider:**
+- Horizontal scrollable pills
+- Touch-friendly swipe on mobile
+- Shows bill count per theme
+- Instant filtering (CSS display:none)
 
-**Request Body:**
-```json
-{
-  "admin_password": "your_password",
-  "bill": {
-    "id": "eu-dsa-2024",
-    "title": "...",
-    "summary": "...",
-    "full_text_url": "...",
-    "level": "eu",
-    "chamber": "European Parliament",
-    "vote_datetime": "2024-12-15 14:00:00",
-    "status": "upcoming"
-  },
-  "action": "create"
-}
-```
+**Bill Cards:**
+- Theme badge (color-coded)
+- Level badge (🇫🇷 France / 🇪🇺 UE)
+- AI-generated summary (if available)
+- Vote buttons (Pour/Contre/Abstention)
+- Progress bars showing results
 
-**Actions:** `create`, `update`, `delete`
+**DSFR Colors:**
+- Primary: `#000091` (French gov blue)
+- Success: `#18753C`
+- Error: `#CE0500`
+- Warning: `#FF9940`
+
+**Ordering:**
+- France bills always before EU bills
+- Sorted by vote_datetime (soonest first)
+
+### Accessibility
+
+- WCAG 2.1 AA compliant
+- ARIA labels on all interactive elements
+- Keyboard navigation
+- Focus-visible states
+- High contrast colors
+- Screen reader announcements
 
 ## 👨‍💼 Admin Panel
 
-Access the admin panel at: `https://yourdomain.com/admin/`
+Access: `https://yourdomain.com/admin/`
 
-**Default Password:** `constituant2024` (⚠️ CHANGE THIS!)
+**Default Password:** Change in `config/config.php`
 
-### Features:
-- View all bills with vote counts
-- Add new bills
-- Edit existing bills
-- Delete bills (also deletes associated votes)
-- Real-time validation
+### Features
 
-### Adding a Bill:
+**Pending Bills** (`/admin/pending-bills.php`):
+- Review auto-imported bills
+- View AI classifications
+- Approve/reject imports
+- Edit metadata before publishing
 
-1. Click "Ajouter un projet"
-2. Fill in required fields:
-   - **ID**: Unique identifier (lowercase, hyphens only, e.g., `eu-dsa-2024`)
-   - **Title**: Bill title (max 500 chars)
-   - **Summary**: Brief description
-   - **Level**: EU or France
-   - **Chamber**: e.g., "European Parliament" or "Assemblée Nationale"
-   - **Vote Date/Time**: When the official vote takes place
-   - **Full Text URL** (optional): Link to official legislation
-   - **Status**: upcoming, voting_now, or completed
-3. Click "Enregistrer"
+**Published Bills** (`/admin/index.php`):
+- View all active bills
+- See vote counts
+- Edit/delete bills
+- Manage vote dates
+
+### Workflow
+
+1. **Import** runs automatically (cron)
+2. Bills go to `pending_bills` table with AI data
+3. **Admin reviews** in `/admin/pending-bills.php`
+4. **Approve** → moves to `bills` table (public)
+5. **Reject** → deletes from pending
 
 ## 🔒 Security
 
-### Implemented Security Measures
+### Implemented Measures
 
-1. **SQL Injection Prevention**: PDO prepared statements
-2. **XSS Prevention**: `htmlspecialchars()` on all output
-3. **CSRF Protection**: Token validation on admin forms
-4. **Rate Limiting**: 10 votes per hour per IP
-5. **Input Validation**: All user input sanitized and validated
-6. **Secure Headers**: X-Content-Type-Options, X-Frame-Options, X-XSS-Protection
-7. **Password Protection**: Admin panel requires password
-8. **File Protection**: `.htaccess` blocks access to sensitive files
-9. **Session Security**: HTTP-only, secure cookies
-10. **Error Handling**: Detailed errors logged, generic errors shown to users
+✅ **SQL Injection**: PDO prepared statements
+✅ **XSS Prevention**: `htmlspecialchars()` on output
+✅ **CSRF Protection**: Token validation
+✅ **Rate Limiting**: 10 votes/hour per IP
+✅ **Input Validation**: All user input sanitized
+✅ **API Key Security**: Keys in separate config (gitignored)
+✅ **Secure Headers**: X-Content-Type, X-Frame-Options
+✅ **Password Protection**: Admin panel authentication
+✅ **File Protection**: `.htaccess` blocks sensitive files
 
-### Security Best Practices
+### Best Practices
 
-- **Change default admin password immediately**
-- **Use HTTPS in production** (Let's Encrypt free SSL)
-- **Keep PHP and MySQL updated**
-- **Regular database backups**
-- **Monitor access logs** for suspicious activity
-- **Consider IP whitelisting** for admin panel
-- **Use strong database passwords**
-
-### Future Security Enhancements
-
-- Implement proper user authentication (OAuth, JWT)
-- Add CAPTCHA for vote submissions
-- Two-factor authentication for admin
-- Database encryption for sensitive data
-- Implement Content Security Policy (CSP)
+- ⚠️ **Change default admin password immediately**
+- ✅ Use HTTPS in production (Let's Encrypt)
+- ✅ Keep PHP/MySQL updated
+- ✅ Regular database backups
+- ✅ Monitor access logs
+- ✅ Never commit `api-keys.php` to Git
+- ✅ Use strong database passwords
 
 ## 🐛 Troubleshooting
 
-### Database Connection Error
+### No Bills Showing
 
-**Error:** "Unable to connect to database"
+```bash
+# Check if bills imported
+mysql -u user -p -e "SELECT COUNT(*) FROM constituant.bills;"
 
-**Solutions:**
-1. Verify database credentials in `config/database.php`
-2. Ensure database exists and user has privileges
-3. Check if MySQL is running: `service mysql status`
-4. Verify hostname (usually `localhost` for shared hosting)
+# Run import manually
+php cron/fetch-bills.php
 
-### White Screen / 500 Error
+# Check logs
+tail -100 logs/bill-imports.log
+```
 
-**Solutions:**
-1. Enable error display temporarily (only for debugging):
-   ```php
-   ini_set('display_errors', 1);
-   error_reporting(E_ALL);
-   ```
-2. Check PHP error logs in cPanel
-3. Verify PHP version is 8.0+
-4. Check file permissions (755 for directories, 644 for files)
+### AI Classification Fails
 
-### Vote Not Recording
+```bash
+# Test Mistral API connection
+php examples/test_mistral_classification.php
 
-**Solutions:**
-1. Check browser console for JavaScript errors
-2. Verify API endpoint is accessible: `/api/cast-vote.php`
-3. Check if IP is being detected correctly
-4. Ensure not hitting rate limit (10 votes/hour)
-5. Check database connection
+# Check API key
+grep MISTRAL_API_KEY public_html/config/api-keys.php
 
-### Admin Login Not Working
+# Re-classify manually
+php cron/reclassify-bills.php --limit=5
+```
 
-**Solutions:**
-1. Verify admin password in `config/config.php`
-2. Clear browser cookies
-3. Check if sessions are enabled: `session_status()`
-4. Verify session directory is writable
+### Import Errors
 
-### Styles Not Loading
+```bash
+# Test individual sources
+php cron/sources/lafabrique.php
+php cron/sources/nosdeputes.php
 
-**Solutions:**
-1. Check file paths in `index.php`
-2. Verify CSS files exist in `/assets/css/`
-3. Clear browser cache (Ctrl + F5)
-4. Check `.htaccess` is not blocking CSS files
+# Check API responses
+php cron/test-lafabrique-csv.php
+php cron/test-nosdeputes-api.php
+```
 
-### Votes Not Showing Up
+### Log File Not Writing
 
-**Solutions:**
-1. Check network tab in browser DevTools
-2. Verify `/api/get-votes.php` returns data
-3. Check database has bills: `SELECT * FROM bills`
-4. Ensure JavaScript is enabled in browser
+```bash
+# Check directory exists and is writable
+ls -la logs/
+chmod 755 logs/
 
-## 📊 Performance Optimization
-
-### Current Optimizations
-
-- **Minification**: Consider minifying CSS and JS for production
-- **Caching**: Browser caching configured in `.htaccess` (1 year for static assets)
-- **Compression**: gzip compression enabled via mod_deflate
-- **Database Indexing**: Indexes on frequently queried columns
-- **Lazy Loading**: Consider lazy loading images in future
-- **CDN**: Consider using a CDN for static assets
-
-### Page Speed Tips
-
-1. Enable OPcache in PHP
-2. Use HTTP/2 if available
-3. Optimize images (use WebP format)
-4. Consider Redis for session storage
-5. Implement service workers for offline support
+# Test logging
+php cron/test-logging.php
+```
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please follow these guidelines:
+Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md)
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m 'Add amazing feature'`
-4. Push to the branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
-
-### Code Style
-
-- **PHP**: Follow PSR-12 coding standard
-- **JavaScript**: Use ES6+ features, semicolons required
-- **CSS**: Use BEM methodology for class names
-- **Comments**: Write clear, concise comments for complex logic
+**Quick Guidelines:**
+- Fork repository
+- Create feature branch: `git checkout -b feature/amazing-feature`
+- Follow PSR-12 (PHP) and ES6+ (JavaScript)
+- Test thoroughly
+- Submit PR with clear description
 
 ## 📄 License
 
-This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.
+**GNU Affero General Public License v3.0 (AGPL-3.0)**
 
 This means:
-- ✅ You can use, modify, and distribute this software freely
-- ✅ You must make source code available if you run this on a server
-- ✅ Any modifications must also be open-source under AGPL-3.0
-- ✅ You must include the original license and copyright notice
+- ✅ Free to use, modify, and distribute
+- ✅ Must make source code available if running on server
+- ✅ Modifications must be open-source under AGPL-3.0
+- ✅ Include original license and copyright
 
-See the [LICENSE](LICENSE) file for full details.
+See [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
-- European Parliament and French National Assembly for legislative data
-- O2switch for reliable shared hosting
-- The open-source community for inspiration
+- **Mistral AI** for classification API
+- **NosDéputés.fr** for legislative data
+- **La Fabrique de la Loi** for comprehensive bill database
+- **DSFR** (Système de Design de l'État) for design inspiration
+- **O2switch** for reliable hosting
+- The open-source community
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/constituant/constituant/issues)
+- **GitHub Issues**: https://github.com/djassoRaph/constituant/issues
+- **Documentation**: See `/docs` and `SETUP.md`
 - **Email**: contact@constituant.fr
-- **Documentation**: [Wiki](https://github.com/constituant/constituant/wiki)
 
 ## 🗓️ Roadmap
 
-### v1.1 (Upcoming)
-- [ ] Email notifications for new bills
+### v0.3 (Next Release)
 - [ ] User accounts with vote history
-- [ ] Social sharing features
+- [ ] Email notifications for new bills
 - [ ] Advanced analytics dashboard
-- [ ] Multi-language support (EN, FR, DE, ES)
+- [ ] Social sharing features
+- [ ] Better EU Parliament integration
 
-### v2.0 (Future)
+### v0.4
 - [ ] Mobile apps (iOS, Android)
-- [ ] Real-time notifications
-- [ ] Integration with official legislative APIs
-- [ ] AI-powered bill summaries
+- [ ] Real-time WebSocket notifications
+- [ ] Multi-language support (EN, DE, ES)
 - [ ] Community discussion forums
+- [ ] Integration with official APIs
+
+### Future
+- [ ] AI debate summaries (pros/cons)
+- [ ] Sentiment analysis on votes
+- [ ] Representative comparison
+- [ ] Bill prediction/trending
+- [ ] Civic education resources
 
 ---
 
 **Made with ❤️ for democracy and civic engagement**
 
-*Last updated: 2024-12-05*
+*Version 0.2.0 - Last updated: 2024-12-08*

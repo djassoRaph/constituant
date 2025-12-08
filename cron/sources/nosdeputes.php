@@ -56,8 +56,19 @@ function fetchNosDePutes(): array
             throw new Exception($parsed['error']);
         }
 
-        $dossiers = $parsed['data']['dossiers_legislatif'] ?? [];
-        logMessage("Found " . count($dossiers) . " dossiers");
+        // API structure changed: now uses 'sections' instead of 'dossiers_legislatif'
+        $sections = $parsed['data']['sections'] ?? [];
+        logMessage("Found " . count($sections) . " dossier sections");
+
+        // Extract dossiers from sections
+        $dossiers = [];
+        foreach ($sections as $sectionWrapper) {
+            if (isset($sectionWrapper['section'])) {
+                $dossiers[] = $sectionWrapper['section'];
+            }
+        }
+
+        logMessage("Extracted " . count($dossiers) . " dossiers from sections");
 
         $maxBills = IMPORT_SETTINGS['max_bills_per_source'];
         $processed = 0;
@@ -104,8 +115,8 @@ function fetchNosDePutes(): array
             }
         }
 
-        // Also fetch recent scrutins (votes) for more detailed info
-        fetchNosDePutesScrutins($config, $stats);
+        // Scrutins (votes) could be fetched separately, but dossiers provide enough info
+        // Uncomment if needed: fetchNosDePutesScrutins($config, $stats);
 
         $executionTime = microtime(true) - $startTime;
         $status = empty($stats['errors']) ? 'success' : 'partial';
@@ -136,45 +147,48 @@ function fetchNosDePutes(): array
  */
 function extractNosDePutesBillData(array $dossier, string $source): ?array
 {
-    // NosDéputés structure varies, handle different formats
-    $titre = $dossier['titre'] ?? $dossier['title'] ?? null;
-    $url = $dossier['url'] ?? $dossier['url_dossier_assemblee'] ?? null;
+    // NosDéputés API structure (new format from 'sections' array):
+    // - id (numeric)
+    // - id_dossier_institution (string identifier)
+    // - titre (title)
+    // - url_institution (Assemblée Nationale URL)
+    // - url_nosdeputes (NosDéputés URL)
+    // - url_nosdeputes_api (API URL for details)
+    // - min_date, max_date (date range)
+
+    $titre = $dossier['titre'] ?? null;
 
     if (empty($titre)) {
         logMessage("Skipping dossier without title", 'WARNING');
         return null;
     }
 
-    // Use dossier ID or URL as external ID
-    $externalId = $dossier['id'] ?? $dossier['numero'] ?? null;
-    if (!$externalId && $url) {
-        // Extract ID from URL if available
-        preg_match('/\/dossiers\/(\w+)/', $url, $matches);
-        $externalId = $matches[1] ?? md5($titre);
-    }
+    // Use id_dossier_institution as external ID (more stable than numeric id)
+    $externalId = $dossier['id_dossier_institution'] ?? $dossier['id'] ?? md5($titre);
 
-    // Extract summary
-    $summary = $dossier['resume'] ?? $dossier['description'] ?? null;
-    if (empty($summary) && isset($dossier['texte'])) {
-        $summary = extractSummaryFromHtml($dossier['texte']);
-    }
+    // Get URLs
+    $url = $dossier['url_nosdeputes'] ?? $dossier['url_institution'] ?? null;
+    $fullTextUrl = $dossier['url_institution'] ?? $url;
 
-    // Parse dates
+    // Use max_date as the latest activity date
     $voteDate = null;
-    if (isset($dossier['date_scrutin'])) {
-        $voteDate = parseDate($dossier['date_scrutin']);
-    } elseif (isset($dossier['date'])) {
-        $voteDate = parseDate($dossier['date']);
+    if (isset($dossier['max_date'])) {
+        $voteDate = parseDate($dossier['max_date']);
+    } elseif (isset($dossier['min_date'])) {
+        $voteDate = parseDate($dossier['min_date']);
     }
 
-    // Get chamber
+    // Extract summary from title (create a brief description)
+    $summary = "Dossier législatif examiné à l'Assemblée nationale";
+    if (isset($dossier['nb_interventions'])) {
+        $summary .= " ({$dossier['nb_interventions']} interventions)";
+    }
+
+    // Determine chamber from URL
     $chamber = 'Assemblée Nationale';
-    if (isset($dossier['assemblee'])) {
-        $chamber = $dossier['assemblee'] === 'senat' ? 'Sénat' : 'Assemblée Nationale';
+    if (!empty($url) && stripos($url, 'senat.fr') !== false) {
+        $chamber = 'Sénat';
     }
-
-    // Get full text URL
-    $fullTextUrl = $url ?? $dossier['url_texte'] ?? null;
 
     return [
         'external_id' => (string)$externalId,

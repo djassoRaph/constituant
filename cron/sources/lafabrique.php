@@ -135,14 +135,18 @@ function fetchLaFabrique(): array
  */
 function parseCsvData(string $csvData): array
 {
-    $lines = str_getcsv($csvData, "\n");
+    $lines = str_getcsv($csvData, "\n", '"', '\\');
 
     if (empty($lines)) {
         return [];
     }
 
     // First line is header
-    $header = str_getcsv(array_shift($lines), ';');
+    $header = str_getcsv(array_shift($lines), ';', '"', '\\');
+
+    // DEBUG: Log actual CSV headers
+    logMessage("CSV Headers found: " . implode(', ', $header), 'INFO');
+    logMessage("Total columns: " . count($header), 'INFO');
 
     $dossiers = [];
 
@@ -151,15 +155,21 @@ function parseCsvData(string $csvData): array
             continue;
         }
 
-        $values = str_getcsv($line, ';');
+        $values = str_getcsv($line, ';', '"', '\\');
 
         if (count($values) !== count($header)) {
-            logMessage("CSV line has incorrect column count, skipping", 'WARNING');
+            logMessage("CSV line has incorrect column count (expected " . count($header) . ", got " . count($values) . "), skipping", 'WARNING');
             continue;
         }
 
         $dossier = array_combine($header, $values);
         $dossiers[] = $dossier;
+    }
+
+    // DEBUG: Log first dossier structure if available
+    if (!empty($dossiers)) {
+        logMessage("Sample dossier keys: " . implode(', ', array_keys($dossiers[0])), 'INFO');
+        logMessage("Sample dossier values (first 3): " . json_encode(array_slice($dossiers[0], 0, 3)), 'INFO');
     }
 
     return $dossiers;
@@ -176,13 +186,14 @@ function extractLaFabriqueBillData(array $dossier, string $source): ?array
 {
     // La Fabrique CSV structure (columns may vary):
     // - id or dossier_id
-    // - titre or title
+    // - titre or title or long_title
     // - url
     // - date_depot or date
     // - statut or status
     // - assemblee or chamber
 
-    $titre = $dossier['titre'] ?? $dossier['title'] ?? $dossier['intitule'] ?? null;
+    // Get title - CSV uses 'Titre' with capital T!
+    $titre = $dossier['Titre'] ?? $dossier['short_title'] ?? null;
 
     if (empty($titre)) {
         logMessage("Skipping dossier without title", 'WARNING');
@@ -190,38 +201,44 @@ function extractLaFabriqueBillData(array $dossier, string $source): ?array
     }
 
     // Get ID
-    $externalId = $dossier['id'] ?? $dossier['dossier_id'] ?? $dossier['numero'] ?? md5($titre);
+    $externalId = $dossier['id'] ?? md5($titre);
 
-    // Get summary (if available)
-    $summary = $dossier['resume'] ?? $dossier['description'] ?? $dossier['objet'] ?? null;
-
-    // Get URL
-    $url = $dossier['url'] ?? $dossier['url_dossier'] ?? null;
-    if (!$url && isset($dossier['id'])) {
-        // Build URL from ID
-        $url = "https://www.lafabriquedelaloi.fr/dossiers/{$dossier['id']}";
+    // Get summary - use short_title or Thèmes as fallback
+    $summary = $dossier['short_title'] ?? null;
+    if (empty($summary) && !empty($dossier['Thèmes'])) {
+        $summary = "Thèmes: " . $dossier['Thèmes'];
     }
 
-    // Parse date
+    // Get URL - CSV column is 'URL du dossier'
+    $url = $dossier['URL du dossier'] ?? null;
+
+    // Parse date - CSV uses 'Date initiale'
     $voteDate = null;
-    $dateField = $dossier['date_depot'] ?? $dossier['date'] ?? $dossier['date_scrutin'] ?? null;
+    $dateField = $dossier['Date initiale'] ?? $dossier['Date de promulgation'] ?? null;
     if ($dateField) {
         $voteDate = parseDate($dateField);
     }
 
-    // Get chamber
+    // Get chamber - determine from URL or assemblee_id
     $chamber = 'Assemblée Nationale';
-    if (isset($dossier['assemblee']) || isset($dossier['chamber'])) {
-        $chamberValue = $dossier['assemblee'] ?? $dossier['chamber'];
-        if (stripos($chamberValue, 'senat') !== false || stripos($chamberValue, 'sénat') !== false) {
-            $chamber = 'Sénat';
-        }
+    if (!empty($url) && stripos($url, 'senat.fr') !== false) {
+        $chamber = 'Sénat';
+    } elseif (!empty($url) && stripos($url, 'assemblee-nationale.fr') !== false) {
+        $chamber = 'Assemblée Nationale';
     }
 
-    // Check status - skip if already adopted/rejected
-    $status = $dossier['statut'] ?? $dossier['status'] ?? '';
-    if (stripos($status, 'adopté') !== false || stripos($status, 'rejeté') !== false) {
-        logMessage("Skipping already completed bill: $titre", 'INFO');
+    // Check status - CSV uses 'État du dossier'
+    $status = $dossier['État du dossier'] ?? '';
+    if (stripos($status, 'adopté') !== false ||
+        stripos($status, 'rejeté') !== false ||
+        stripos($status, 'promulgué') !== false) {
+        logMessage("Skipping completed bill: $titre", 'INFO');
+        return null;
+    }
+
+    // Skip if promulgation date exists (already enacted)
+    if (!empty($dossier['Date de promulgation']) && !empty($dossier['Numéro de la loi'])) {
+        logMessage("Skipping promulgated law: $titre", 'INFO');
         return null;
     }
 

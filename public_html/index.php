@@ -50,7 +50,6 @@ require_once __DIR__ . '/config/config.php';
                 </div>
                 <nav class="main-nav">
                     <a href="#about" class="nav-link">À propos</a>
-                    <a href="/admin/" class="nav-link">Admin</a>
                 </nav>
             </div>
         </div>
@@ -71,38 +70,50 @@ require_once __DIR__ . '/config/config.php';
                 <button onclick="loadBills()" class="btn btn-secondary">Réessayer</button>
             </div>
 
-            <!-- EU Bills Section -->
-            <section id="eu-section" class="bills-section hidden">
-                <div class="section-header">
-                    <h2>
-                        <span class="flag" aria-hidden="true">🇪🇺</span>
-                        Union Européenne
-                    </h2>
-                    <p class="section-description">Votes au Parlement européen</p>
-                </div>
-                <div id="eu-bills" class="bills-grid">
-                    <!-- Bills will be loaded here by JavaScript -->
-                </div>
-            </section>
+            <!-- Main Tabs -->
+            <div id="tabs-container" class="tabs-container hidden" role="tablist">
+                <button
+                    class="tab-button active"
+                    data-tab="active"
+                    role="tab"
+                    aria-selected="true"
+                    aria-controls="active-tab-content"
+                    onclick="switchTab('active')">
+                    <span class="tab-icon">📋</span>
+                    <span class="tab-label">Lois en cours</span>
+                    <span class="tab-count" id="active-count">0</span>
+                </button>
+                <button
+                    class="tab-button"
+                    data-tab="past"
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="past-tab-content"
+                    onclick="switchTab('past')">
+                    <span class="tab-icon">📜</span>
+                    <span class="tab-label">Votes passés</span>
+                    <span class="tab-count" id="past-count">0</span>
+                </button>
+            </div>
 
-            <!-- France Bills Section -->
-            <section id="france-section" class="bills-section hidden">
-                <div class="section-header">
-                    <h2>
-                        <span class="flag" aria-hidden="true">🇫🇷</span>
-                        France
-                    </h2>
-                    <p class="section-description">Votes à l'Assemblée nationale</p>
+            <!-- Theme Slider (only visible for active tab) -->
+            <div id="theme-slider-container" class="theme-slider-container hidden">
+                <div class="theme-slider" role="radiogroup" aria-label="Filtrer par thème">
+                    <!-- Theme pills will be inserted here by JavaScript -->
                 </div>
-                <div id="france-bills" class="bills-grid">
+            </div>
+
+            <!-- Bills Container -->
+            <div id="bills-container" class="bills-container hidden">
+                <div id="bills-grid" class="bills-grid" role="region" aria-live="polite">
                     <!-- Bills will be loaded here by JavaScript -->
                 </div>
-            </section>
+            </div>
 
             <!-- Empty State -->
             <div id="empty-state" class="empty-state hidden">
-                <p>Aucun vote en cours actuellement.</p>
-                <p class="empty-subtitle">Revenez bientôt pour participer aux prochains votes.</p>
+                <p>Aucune loi dans cette catégorie.</p>
+                <p class="empty-subtitle">Essayez un autre filtre ou revenez bientôt.</p>
             </div>
         </div>
     </main>
