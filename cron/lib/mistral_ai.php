@@ -10,7 +10,7 @@
  */
 
 // Load API keys from secure config file
-require_once __DIR__ . '/../config/api-keys.php';
+require_once __DIR__ . '/../../public_html/config/api-keys.php';
 
 // Predefined legislative categories
 define('LEGISLATIVE_CATEGORIES', [

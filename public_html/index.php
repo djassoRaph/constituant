@@ -1,10 +1,7 @@
 <?php
 /**
- * Constituant - Main Landing Page
- *
- * Displays legislative bills from EU and France with voting interface.
- *
- * @package Constituant
+ * Constituant - Modern Landing Page
+ * French Government Design + Social Media Friendly
  */
 
 require_once __DIR__ . '/config/config.php';
@@ -14,293 +11,207 @@ require_once __DIR__ . '/config/config.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Constituant - Exprimez votre opinion sur les lois débattues au Parlement européen et à l'Assemblée nationale française.">
-    <meta name="keywords" content="démocratie, vote, législation, parlement européen, assemblée nationale, france, eu">
-    <meta name="author" content="Constituant">
-
-    <!-- Open Graph / Social Media -->
+    <meta name="description" content="Constituant - Votez sur les lois débattues à l'Assemblée nationale et au Parlement européen">
+    <meta name="keywords" content="démocratie, vote, législation, assemblée nationale, parlement européen">
+    
+    <!-- Open Graph / Twitter Card -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Constituant - Votre voix sur les lois du jour">
-    <meta property="og:description" content="Exprimez votre opinion sur les lois débattues au Parlement européen et à l'Assemblée nationale.">
+    <meta property="og:site_name" content="Constituant">
+    <meta property="og:title" content="<?php echo SITE_NAME; ?> - <?php echo SITE_TAGLINE; ?>">
+    <meta property="og:description" content="Exprimez votre opinion sur les lois en cours de débat">
     <meta property="og:url" content="<?php echo SITE_URL; ?>">
+    <meta property="og:image" content="<?php echo SITE_URL; ?>/assets/images/og-image.png">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?php echo SITE_NAME; ?>">
+    <meta name="twitter:description" content="Votre voix fait la loi">
+    <meta name="twitter:image" content="<?php echo SITE_URL; ?>/assets/images/og-image.png">
 
     <title><?php echo SITE_NAME; ?> - <?php echo SITE_TAGLINE; ?></title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/assets/images/logo.svg">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏛️</text></svg>">
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/assets/css/style.css?v=<?php echo SITE_VERSION; ?>">
-    <link rel="stylesheet" href="/assets/css/mobile.css?v=<?php echo SITE_VERSION; ?>">
-
-    <!-- Preconnect for performance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://api.mistral.ai">
 </head>
 <body>
     <!-- Header -->
     <header class="site-header">
         <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <h1>
-                        <span class="icon" aria-hidden="true">🏛️</span>
-                        <span class="site-name"><?php echo SITE_NAME; ?></span>
-                    </h1>
-                    <p class="tagline"><?php echo SITE_TAGLINE; ?></p>
-                </div>
-                <nav class="main-nav">
-                    <a href="#about" class="nav-link">À propos</a>
-                </nav>
+            <div class="logo">
+                <h1>
+                    <span class="logo-icon">🏛️</span>
+                    <span class="logo-text"><?php echo SITE_NAME; ?></span>
+                </h1>
+                <p class="tagline"><?php echo SITE_TAGLINE; ?></p>
             </div>
+            <nav class="header-nav">
+                <a href="#about" class="nav-link">À propos</a>
+            </nav>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="main-content">
         <div class="container">
+            
             <!-- Loading State -->
             <div id="loading" class="loading-state">
                 <div class="spinner"></div>
-                <p>Chargement des votes en cours...</p>
+                <p>Chargement des lois en cours...</p>
             </div>
 
             <!-- Error State -->
-            <div id="error-message" class="error-state hidden">
-                <p class="error-text"></p>
-                <button onclick="loadBills()" class="btn btn-secondary">Réessayer</button>
+            <div id="error-state" class="error-state hidden">
+                <p class="error-message"></p>
+                <button onclick="loadBills()" class="btn-retry">Réessayer</button>
             </div>
 
-            <!-- Main Tabs -->
-            <div id="tabs-container" class="tabs-container hidden" role="tablist">
-                <button
-                    class="tab-button active"
-                    data-tab="active"
-                    role="tab"
-                    aria-selected="true"
-                    aria-controls="active-tab-content"
-                    onclick="switchTab('active')">
+            <!-- Tabs -->
+            <div id="tabs-container" class="tabs-container hidden">
+                <button class="tab active" data-tab="active" onclick="switchTab('active')">
                     <span class="tab-icon">📋</span>
-                    <span class="tab-label">Lois en cours</span>
-                    <span class="tab-count" id="active-count">0</span>
+                    <span class="tab-label">En cours</span>
+                    <span class="tab-badge" id="active-count">0</span>
                 </button>
-                <button
-                    class="tab-button"
-                    data-tab="past"
-                    role="tab"
-                    aria-selected="false"
-                    aria-controls="past-tab-content"
-                    onclick="switchTab('past')">
+                <button class="tab" data-tab="past" onclick="switchTab('past')">
                     <span class="tab-icon">📜</span>
-                    <span class="tab-label">Votes passés</span>
-                    <span class="tab-count" id="past-count">0</span>
+                    <span class="tab-label">Terminés</span>
+                    <span class="tab-badge" id="past-count">0</span>
                 </button>
             </div>
 
-            <!-- Theme Slider (only visible for active tab) -->
-            <div id="theme-slider-container" class="theme-slider-container hidden">
-                <div class="theme-slider" role="radiogroup" aria-label="Filtrer par thème">
-                    <!-- Theme pills will be inserted here by JavaScript -->
-                </div>
-            </div>
-
-            <!-- Bills Container -->
+            <!-- Bills Grid -->
             <div id="bills-container" class="bills-container hidden">
-                <div id="bills-grid" class="bills-grid" role="region" aria-live="polite">
-                    <!-- Bills will be loaded here by JavaScript -->
+                <div id="bills-grid" class="bills-grid">
+                    <!-- Bills loaded by JavaScript -->
                 </div>
             </div>
 
             <!-- Empty State -->
             <div id="empty-state" class="empty-state hidden">
-                <p>Aucune loi dans cette catégorie.</p>
-                <p class="empty-subtitle">Essayez un autre filtre ou revenez bientôt.</p>
+                <div class="empty-icon">📭</div>
+                <p class="empty-title">Aucune loi disponible</p>
+                <p class="empty-subtitle">Revenez bientôt pour voter sur les prochains projets de loi</p>
             </div>
+
         </div>
     </main>
 
     <!-- About Section -->
     <section id="about" class="about-section">
-    <div class="container">
-        <h2>À propos de Constituant</h2>
-        
-        <div class="about-content">
-            <h3>🏛️ Notre Mission</h3>
-            <p>
-                <strong>Constituant</strong> est une plateforme citoyenne qui vise à rapprocher les 
-                citoyens de leurs institutions démocratiques. Elle permet à chacun d'exprimer son 
-                opinion sur les projets de loi débattus au Parlement européen et à l'Assemblée 
-                nationale française, de manière simple, anonyme et transparente.
-            </p>
-            
-            <h3>🤔 Pourquoi cette plateforme ?</h3>
-            <p>
-                Dans une démocratie représentative, les citoyens ne sont consultés qu'occasionnellement 
-                lors des élections. Entre-temps, les décisions législatives importantes sont prises 
-                sans que l'on puisse exprimer directement notre position sur chaque sujet.
-            </p>
-            <p>
-                <strong>Constituant</strong> propose une approche complémentaire : donner à chaque 
-                citoyen la possibilité de voter sur les lois en cours de débat, et ainsi créer une 
-                base de données d'opinions citoyennes indépendante et transparente.
-            </p>
-            
-            <div class="mission-box">
-                <h3>🎯 Nos Objectifs</h3>
-                <ul>
-                    <li><strong>Transparence</strong> : Recueillir l'opinion citoyenne de manière ouverte et vérifiable</li>
-                    <li><strong>Complémentarité</strong> : Offrir aux élus une vision directe des préoccupations de leurs électeurs</li>
-                    <li><strong>Indépendance</strong> : Créer un outil citoyen, libre de toute influence institutionnelle</li>
-                    <li><strong>Participation</strong> : Encourager l'engagement civique au-delà des scrutins électoraux</li>
-                </ul>
-            </div>
-            
-            <h3>📊 Une Alternative aux Sondages Traditionnels</h3>
-            <p>
-                Les sondages d'opinion peuvent être influencés par de nombreux facteurs : la formulation 
-                des questions, la sélection des répondants, les commanditaires, ou encore l'interprétation 
-                des résultats. De plus, les citoyens n'ont généralement pas accès aux méthodologies 
-                détaillées ni aux données brutes.
-            </p>
-            <p>
-                <strong>Constituant</strong> adopte une approche différente :
-            </p>
-            <ul>
-                <li>✅ <strong>Questions claires</strong> : Pour ou contre chaque projet de loi, sans ambiguïté</li>
-                <li>✅ <strong>Accès libre</strong> : Tout citoyen peut participer, sans sélection préalable</li>
-                <li>✅ <strong>Résultats publics</strong> : Les agrégats de votes sont visibles en temps réel</li>
-                <li>✅ <strong>Open source</strong> : Le code est ouvert, auditable par tous</li>
-                <li>✅ <strong>Indépendance</strong> : Aucun financement institutionnel, aucune influence extérieure</li>
-            </ul>
-            
-            <h3>🚀 Vision à Long Terme</h3>
-            <p>
-                Cette plateforme a pour ambition de devenir une <strong>association loi 1901</strong>, 
-                gérée de manière démocratique par ses adhérents. À terme, les membres de l'association 
-                pourront non seulement voter, mais aussi proposer des projets de loi alternatifs, 
-                débattre des enjeux législatifs, et créer un espace de réflexion collective sur la 
-                gouvernance.
-            </p>
-            <p>
-                L'objectif est de montrer aux élus qu'il existe une demande citoyenne pour une 
-                <strong>démocratie plus participative</strong>, où les représentants peuvent prendre 
-                en compte l'avis direct de leurs électeurs avant de voter sur des textes qui nous 
-                concernent tous.
-            </p>
-            
-            <div class="alpha-notice">
-                <strong>⚠️ Version Alpha - Projet Indépendant</strong>
-                <p>
-                    Ce site est actuellement en phase de développement <span class="italic">version alpha</span>
-                    et représente le projet d'une seule personne. Il n'est affilié à aucun parti 
-                    politique, aucun gouvernement, ni aucune organisation. 
-                </p>
-                <p>
-                    L'objectif est de tester la faisabilité technique et de mesurer l'intérêt citoyen 
-                    avant d'envisager la création d'une association formelle.
+        <div class="container">
+            <div class="about-header">
+                <h2>À propos de Constituant</h2>
+                <p class="about-lead">
+                    Une plateforme citoyenne pour exprimer votre opinion sur les lois débattues 
+                    à l'Assemblée nationale et au Parlement européen.
                 </p>
             </div>
-            
-            <h3>💡 Principes Fondateurs</h3>
-            <div class="principles-grid">
-                <div class="principle">
-                    <span class="icon">🔓</span>
-                    <h4>Transparence</h4>
-                    <p>Code ouvert, données publiques, méthode vérifiable</p>
+
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="about-card-icon">🔓</div>
+                    <h3>Transparence</h3>
+                    <p>Code ouvert, données publiques, résultats en temps réel</p>
                 </div>
-                <div class="principle">
-                    <span class="icon">⚖️</span>
-                    <h4>Neutralité</h4>
-                    <p>Aucune influence politique, aucun biais dans les questions</p>
+                <div class="about-card">
+                    <div class="about-card-icon">🔒</div>
+                    <h3>Anonymat</h3>
+                    <p>Votes anonymes, aucune donnée personnelle collectée</p>
                 </div>
-                <div class="principle">
-                    <span class="icon">🔒</span>
-                    <h4>Vie privée</h4>
-                    <p>Votes anonymes, pas de collecte de données personnelles</p>
+                <div class="about-card">
+                    <div class="about-card-icon">⚖️</div>
+                    <h3>Neutralité</h3>
+                    <p>Indépendant de tout parti ou gouvernement</p>
                 </div>
-                <div class="principle">
-                    <span class="icon">🤝</span>
-                    <h4>Participation</h4>
-                    <p>Ouvert à tous, code modifiable, gouvernance collective</p>
+                <div class="about-card">
+                    <div class="about-card-icon">🤝</div>
+                    <h3>Participation</h3>
+                    <p>Ouvert à tous, contribution collective bienvenue</p>
                 </div>
             </div>
-            
-            <h3>🛠️ Comment Participer ?</h3>
-            <p>
-                Ce projet est <strong>open source</strong> et ouvert à toutes les contributions :
-            </p>
-            <ul>
-                <li><strong>Citoyens</strong> : Votez, partagez, donnez votre avis</li>
-                <li><strong>Développeurs</strong> : Contribuez au code, proposez des améliorations</li>
-                <li><strong>Juristes</strong> : Aidez à comprendre les textes législatifs</li>
-                <li><strong>Communicants</strong> : Faites connaître la plateforme</li>
-                <li><strong>Analystes</strong> : Étudiez les données, proposez des visualisations</li>
-            </ul>
-            
-            <div class="participation-cta">
-                <h3>Vous voulez participer ?</h3>
-                <p>
-                    Que vous soyez développeur, designer, juriste, ou simplement citoyen engagé, 
-                    votre contribution est la bienvenue !
-                </p>
-                <div class="cta-buttons">
-                    <a href="mailto:contact@constituant.fr" class="btn-primary">
-                        📧 Me contacter
-                    </a>
-                    <a href="https://github.com/constituant" class="btn-secondary" target="_blank" rel="noopener">
-                        💻 Voir le code source
-                    </a>
+
+            <div class="about-cta">
+                <p><strong>Version Alpha</strong> - Projet expérimental et indépendant</p>
+                <div class="about-links">
+                    <a href="mailto:contact@constituant.fr" class="btn-outline">Contact</a>
+                    <a href="https://github.com/djassoRaph/constituant" class="btn-outline" target="_blank">GitHub</a>
                 </div>
-                <p class="disclaimer">
-                    <em>Ce projet est indépendant, non-partisan, et entièrement bénévole.</em>
-                </p>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
     <!-- Footer -->
-    <footer class="site-footer">
+    <footer class="footer">
         <div class="container">
-            <div class="footer-content">
-                <p>&copy; <?php echo date('Y'); ?> <?php echo SITE_NAME; ?>. Tous droits réservés.</p>
-                <nav class="footer-nav">
-                    <a href="#about" class="footer-link">À propos</a>
-                    <a href="mailto:contact@constituant.fr" class="footer-link">Contact</a>
-                    <a href="https://github.com/djassoRaph/constituant" class="footer-link" target="_blank" rel="noopener">GitHub</a>
-                </nav>
-            </div>
-            <p class="footer-note">
-                Les votes exprimés sur cette plateforme sont indicatifs et ne représentent pas
-                les votes officiels des institutions législatives.
+            <p>&copy; <?php echo date('Y'); ?> Constituant. Projet open source et indépendant.</p>
+            <p class="footer-disclaimer">
+                Les votes sont indicatifs et ne représentent pas les votes officiels des institutions.
             </p>
         </div>
     </footer>
 
-    <!-- Vote Confirmation Modal -->
-    <div id="vote-modal" class="modal hidden" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+    <!-- Vote Modal -->
+    <div id="vote-modal" class="modal hidden">
         <div class="modal-overlay" onclick="closeVoteModal()"></div>
         <div class="modal-content">
             <h3 id="modal-title">Confirmer votre vote</h3>
             <p id="modal-message"></p>
             <div class="modal-actions">
-                <button onclick="closeVoteModal()" class="btn btn-secondary">Annuler</button>
-                <button onclick="confirmVote()" class="btn btn-primary" id="confirm-vote-btn">Confirmer</button>
+                <button onclick="closeVoteModal()" class="btn-secondary">Annuler</button>
+                <button onclick="confirmVote()" class="btn-primary" id="confirm-btn">Confirmer</button>
             </div>
         </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="toast hidden" role="alert" aria-live="polite">
-        <span id="toast-message"></span>
+    <!-- Share Modal -->
+    <div id="share-modal" class="modal hidden">
+        <div class="modal-overlay" onclick="closeShareModal()"></div>
+        <div class="modal-content share-modal-content">
+            <button class="modal-close" onclick="closeShareModal()">×</button>
+            <h3>Partager cette loi</h3>
+            <p id="share-title" class="share-bill-title"></p>
+            
+            <div class="share-buttons">
+                <button onclick="shareOnTwitter()" class="share-btn twitter">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                    Twitter
+                </button>
+                <button onclick="shareOnFacebook()" class="share-btn facebook">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                    </svg>
+                    Facebook
+                </button>
+                <button onclick="copyShareLink()" class="share-btn copy">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    Copier le lien
+                </button>
+            </div>
+            
+            <input type="text" id="share-url" class="share-url" readonly>
+        </div>
     </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast hidden"></div>
 
     <!-- Scripts -->
     <script src="/assets/js/app.js?v=<?php echo SITE_VERSION; ?>"></script>
     <script src="/assets/js/voting.js?v=<?php echo SITE_VERSION; ?>"></script>
+    <script src="/assets/js/share.js?v=<?php echo SITE_VERSION; ?>"></script>
 
-    <!-- Initialize app on page load -->
     <script>
-        // Load bills when DOM is ready
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initializeApp);
         } else {
@@ -308,14 +219,10 @@ require_once __DIR__ . '/config/config.php';
         }
     </script>
 
-    <!-- No JavaScript Fallback -->
     <noscript>
-        <div class="noscript-message">
-            <p>
-                <strong>JavaScript est désactivé.</strong><br>
-                Cette application nécessite JavaScript pour fonctionner.
-                Veuillez l'activer dans les paramètres de votre navigateur.
-            </p>
+        <div class="noscript">
+            <p><strong>JavaScript requis</strong></p>
+            <p>Cette application nécessite JavaScript pour fonctionner.</p>
         </div>
     </noscript>
 </body>
