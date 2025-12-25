@@ -5,209 +5,209 @@ All notable changes to the Constituant project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2024-12-05
-
-### 🎉 Initial Release
-
-First public release of Constituant MVP - A civic engagement platform for voting on EU and French legislation.
-
-### Added
-
-#### Frontend
-- **Landing Page**: Mobile-first responsive design with bill cards
-- **Vote Interface**: Interactive voting with confirmation modals
-- **Real-time Results**: Live vote statistics with progress bars
-- **Read More/Less**: Expandable bill summaries
-- **Urgency Indicators**: Visual badges for urgent votes
-- **Toast Notifications**: User feedback for actions
-- **Dark Mode Support**: Automatic theme switching
-- **Accessibility**: WCAG 2.1 AA compliant with ARIA labels
-
-#### Backend
-- **Database Schema**: MySQL tables for bills and votes
-- **API Endpoints**:
-  - `GET /api/get-votes.php` - Retrieve bills with vote counts
-  - `POST /api/cast-vote.php` - Submit votes
-  - `GET /api/get-results.php` - Get detailed vote statistics
-  - `POST /api/add-bill.php` - Admin bill management
-- **Security Features**:
-  - SQL injection prevention with PDO prepared statements
-  - XSS protection with output sanitization
-  - Rate limiting (10 votes/hour per IP)
-  - CSRF token validation
-  - Secure session handling
-- **Admin Panel**: Simple interface to manage bills
-
-#### Infrastructure
-- **Apache Configuration**: `.htaccess` with security headers and caching
-- **Compression**: gzip compression for text assets
-- **Browser Caching**: 1-year cache for static assets
-- **SEO Optimization**: `robots.txt` and meta tags
-- **Documentation**:
-  - Comprehensive README with API docs
-  - O2switch-specific installation guide
-  - Troubleshooting guide
-
-#### Design
-- **Color Scheme**: Institutional blue (#2E5090) and red (#E63946)
-- **Typography**: System fonts with Georgia for body text
-- **Responsive Grid**: Single column mobile, multi-column desktop
-- **Animations**: Smooth transitions and loading states
-- **Icons**: Emoji-based for broad compatibility
-
-### Security
-- PDO prepared statements prevent SQL injection
-- `htmlspecialchars()` prevents XSS attacks
-- Rate limiting prevents vote spam
-- CSRF tokens on admin forms
-- IP-based vote tracking
-- Secure session configuration
-- File access protection via `.htaccess`
-
-### Performance
-- Mobile-first CSS loading
-- Optimized database queries with indexes
-- Browser caching (1 year for assets)
-- gzip compression enabled
-- Minimal JavaScript (~10KB combined)
-- No external dependencies
-- < 2 second load time on 3G
-
-### Browser Support
-- ✅ Chrome/Edge 90+
-- ✅ Firefox 88+
-- ✅ Safari 14+
-- ✅ Mobile Safari iOS 14+
-- ✅ Chrome Android 90+
-
-### Tested On
-- ✅ O2switch shared hosting
-- ✅ PHP 8.0, 8.1, 8.2
-- ✅ MySQL 5.7+ / MariaDB 10.2+
-- ✅ Apache 2.4
-
-### Sample Data
-- 4 sample bills included (2 EU, 2 France)
-- Ready for testing immediately after installation
-
----
-
 ## [Unreleased]
 
-### Planned for v1.1
-- Email notifications for new bills
-- User accounts with vote history
-- Social sharing buttons
-- Export vote results to CSV
-- Bill categories/tags
-- Search and filter functionality
-- Vote change tracking over time
-
-### Planned for v1.2
-- Multi-language support (EN, DE, ES, IT)
-- Advanced analytics dashboard
-- Vote reminders
-- Bill comparison feature
-- Public API for developers
-- Automated bill import from official sources
-
-### Planned for v2.0
-- Mobile apps (iOS, Android)
-- Real-time WebSocket updates
-- User profiles and reputation system
-- Discussion forums per bill
-- Vote impact visualization
-- Integration with official parliamentary APIs
+### Planned
+- Representative scorecards (alignment tracking)
+- Petition threshold system
+- Discourse integration for discussions
+- User account system (optional identity verification)
+- Email notifications for new votes
+- Enhanced analytics dashboard
 
 ---
 
-## Version History
+## [0.2.0] - 2024-12-XX - Production Deployment
 
-### [1.0.0] - 2024-12-05
-- Initial release
+### Added
+- **Full Automation**: Bills now flow automatically from API → classification → publication
+- **Mistral AI Integration**: Automatic theme classification and citizen-friendly summaries
+  - Free tier usage (~95% confidence)
+  - 15 predefined themes (Economy, Health, Environment, etc.)
+  - Plain-language summaries (2-3 sentences)
+- **Cron Jobs**: Automated bill fetching every 6 hours
+- **Database Triggers**: Automatic vote counting (yes_count, no_count, abstain_count)
+- **Theme Filtering**: Browse bills by category on frontend
+- **Social Sharing**: Twitter and Facebook integration
+- **Mobile Optimizations**: Improved responsive design
+- **API Rate Limiting**: 10 votes/hour per IP to prevent abuse
+- **Comprehensive Logging**: Import logs with execution times and error tracking
 
----
+### Changed
+- Removed manual approval workflow (pending_bills → bills)
+- Bills now auto-publish after AI classification
+- Updated UI to move voted items to separate column
+- Improved admin panel layout and navigation
+- Enhanced error handling in fetchers
+- Optimized database queries with indexes
 
-## Notes
+### Fixed
+- French legislative URLs (corrected period references)
+- Twitter share integration (proper URL encoding)
+- Facebook sharing functionality
+- Admin panel JavaScript issues
+- Database connection timeout handling
+- Vote double-counting prevention
 
-### Breaking Changes
-None yet - this is the first release!
+### Technical
+- **Database Schema**: Added AI classification columns (theme, ai_summary, ai_processed_at)
+- **New Tables**: import_logs for tracking automated imports
+- **Triggers**: AUTO_UPDATE_VOTE_COUNTS for real-time statistics
+- **Cron Scripts**: 
+  - fetch-bills.php (main orchestrator)
+  - reclassify-bills.php (Mistral AI classification)
+  - test-import.php (comprehensive test suite)
+- **API Integrations**:
+  - NosDéputés.fr API
+  - European Parliament Legislative Observatory
+  - La Fabrique de la Loi
+  - Mistral AI API
 
-### Deprecated
-None
-
-### Known Issues
-- Vote counts may be delayed by up to 30 seconds (polling interval)
-- No vote history for users (IP-based only)
-- Admin panel has basic authentication only
-- No email notifications yet
-- Single language (French) only
-
-### Migration Guide
-Not applicable for initial release.
-
----
-
-## How to Upgrade
-
-When new versions are released, follow these steps:
-
-1. **Backup Everything**
-   - Database: Export via phpMyAdmin
-   - Files: Download entire `public_html` directory
-
-2. **Check CHANGELOG**
-   - Read breaking changes
-   - Note new features
-   - Check database migrations needed
-
-3. **Update Files**
-   - Replace all files except `config/`
-   - Keep your `config/database.php` and `config/config.php`
-
-4. **Run Migrations**
-   - Import any SQL migration files
-   - Check for new config options
-
-5. **Test Thoroughly**
-   - Test voting functionality
-   - Check admin panel
-   - Verify API endpoints
-
-6. **Clear Caches**
-   - Browser cache (Ctrl + F5)
-   - Server cache if applicable
+### Infrastructure
+- Deployed to production: constituant.fr
+- Configured SSL certificate
+- Set up automated backups
+- Cron jobs configured on o2switch
+- Log rotation implemented
 
 ---
 
-## Contributors
+## [0.1.0] - 2024-12-10 - MVP Launch
 
-- **Development**: Constituant Team
-- **Design**: Constituant Design
-- **Testing**: Community Contributors
+### Added
+- **Core Voting System**
+  - Anonymous voting (IP-based)
+  - For/Against/Abstain options
+  - Real-time result aggregation
+  - Vote prevention (one vote per IP per bill)
+  
+- **Bill Management**
+  - Database schema for bills and votes
+  - Sample data for testing
+  - Admin panel for bill CRUD operations
+  - Pending bills workflow (later removed in 0.2.0)
 
-## Support
+- **Frontend**
+  - Mobile-first responsive design
+  - Two-card layout (EU and France)
+  - Vote statistics with progress bars
+  - Expandable bill details
+  - Links to full legislative texts
 
-- GitHub Issues: https://github.com/constituant/constituant/issues
-- Email: contact@constituant.fr
-- Documentation: See README.md
+- **Backend**
+  - PHP 8.x with PDO
+  - MySQL database with proper indexes
+  - REST API endpoints:
+    - GET /api/get-votes.php (fetch bills)
+    - POST /api/cast-vote.php (submit vote)
+    - GET /api/get-results.php (aggregated results)
+  - Admin API (bill management)
+
+- **Security**
+  - SQL injection prevention (prepared statements)
+  - XSS prevention (output escaping)
+  - CSRF protection for admin
+  - Rate limiting (10 votes/hour)
+  - Input validation and sanitization
+  - Secure headers (.htaccess)
+
+- **Documentation**
+  - README.md with project overview
+  - INSTALLATION.md with setup guide
+  - QUICKSTART.md for rapid deployment
+  - CONTRIBUTING.md with guidelines
+  - Inline code comments
+
+### Infrastructure
+- GitHub repository: github.com/djassoRaph/constituant
+- Domain registered: constituant.fr
+- License: AGPL-3.0
+- Hosting: o2switch shared hosting
+- Development: WSL (Ubuntu) environment
 
 ---
 
-**Legend:**
-- 🎉 Major release
-- ✨ New feature
-- 🐛 Bug fix
-- 🔒 Security fix
-- ⚡ Performance improvement
-- 📚 Documentation
-- 🎨 UI/UX improvement
-- ♿ Accessibility
-- 🌍 Internationalization
-- 🗃️ Database
-- 🔧 Configuration
-- 🚀 Deployment
+## Project Milestones
+
+### Phase 1: Transparency (Current)
+**Status**: ✅ COMPLETE - MVP deployed with full automation
+
+**Goals Achieved**:
+- [x] Automated legislative data ingestion
+- [x] AI-powered bill classification
+- [x] Simple voting interface
+- [x] Real-time result aggregation
+- [x] Plain-language summaries
+- [x] Mobile-responsive design
+- [x] Production deployment
+
+**Next Steps**:
+- [ ] Gather user feedback
+- [ ] Improve UI/UX based on usage patterns
+- [ ] Expand to more legislative sources
+- [ ] Add user accounts (optional)
+- [ ] Implement discussion features
+
+### Phase 2: Accountability (Planned - Years 2-3)
+- [ ] Representative scorecards (alignment tracking)
+- [ ] Petition thresholds (trigger responses)
+- [ ] Citizen amendment proposals
+- [ ] Impact tracking (6-month follow-ups)
+- [ ] Partnership with civic organizations
+
+### Phase 3: Transformation (Planned - Year 3+)
+- [ ] Constituent assembly simulator
+- [ ] Sortition experiments (random panels)
+- [ ] Alternative legislation drafting
+- [ ] Deliberation training workshops
+- [ ] Educational content on sortition
 
 ---
 
-*Keep this file updated with every release!*
+## Technical Debt & Known Issues
+
+### Current Issues
+- [ ] EU Parliament API occasionally returns 406 (Accept header issue)
+- [ ] Admin panel JavaScript needs refactoring
+- [ ] Occasional database connection timeouts (need connection pooling)
+- [ ] La Fabrique CSV parser needs optimization
+- [ ] Some error messages not translated to French
+
+### Future Improvements
+- [ ] Add database connection pooling
+- [ ] Implement Redis caching for vote counts
+- [ ] Add Elasticsearch for bill search
+- [ ] Migrate to modern PHP framework (Phase 2)
+- [ ] Add comprehensive test suite (PHPUnit)
+- [ ] Implement continuous integration (GitHub Actions)
+- [ ] Add performance monitoring (APM)
+
+---
+
+## Version History Summary
+
+| Version | Date       | Description                          |
+|---------|------------|--------------------------------------|
+| 0.2.0   | 2024-12-XX | Full automation + AI classification  |
+| 0.1.0   | 2024-12-10 | MVP with manual bill management      |
+
+---
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute to this changelog and the project.
+
+### Changelog Guidelines
+- Keep entries concise but informative
+- Use present tense ("Add feature" not "Added feature")
+- Group changes by type (Added, Changed, Fixed, etc.)
+- Link to relevant issues/PRs
+- Update unreleased section for ongoing work
+
+---
+
+*"We are all constituants" - building tools for democratic participation*
+
+**Repository**: https://github.com/djassoRaph/constituant  
+**License**: AGPL-3.0  
+**Status**: Production - Active Development

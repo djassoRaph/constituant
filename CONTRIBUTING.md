@@ -1,464 +1,343 @@
 # Contributing to Constituant
 
-Thank you for your interest in contributing to Constituant! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to Constituant! This is a civic project built by citizens, for citizens.
 
-## 🌟 How Can I Contribute?
+## Philosophy First
 
-### Reporting Bugs
+Before contributing code, please understand our mission:
+- Transform passive voters into active governance participants
+- Inspired by Étienne Chouard's work on sortition and direct democracy
+- "A weapon for the people against the opacity of political powers"
 
-Before creating a bug report:
-1. Check the [existing issues](https://github.com/constituant/constituant/issues) to avoid duplicates
-2. Test with the latest version
-3. Gather relevant information (browser, PHP version, error messages)
+Read the [README Philosophy section](README.md#philosophy) to understand what we're building and why.
 
-**Good Bug Report Includes:**
-- Clear, descriptive title
-- Steps to reproduce
-- Expected vs actual behavior
-- Screenshots if applicable
-- Environment details (browser, OS, PHP version)
-- Error messages from browser console or PHP logs
+## How to Contribute
 
-**Example:**
-```
-Title: Vote button doesn't respond on Safari iOS 14
+### 1. Start Small
+- Fix bugs or typos
+- Improve documentation
+- Add tests
+- Optimize existing features
 
-Steps to reproduce:
-1. Open site on Safari iOS 14
-2. Click "Pour" button on any bill
-3. Nothing happens
+### 2. Discuss Big Changes
+Before starting major work:
+1. Open a GitHub Issue describing your idea
+2. Wait for maintainer feedback
+3. Discuss approach and implementation
+4. Only then start coding
 
-Expected: Confirmation modal should appear
-Actual: No response, no console errors
+### 3. Follow the Code Style
+- **PHP**: PSR-12 coding standard
+- **SQL**: Lowercase keywords, uppercase table/column names
+- **JavaScript**: ES6+, semicolons required
+- **Comments**: Explain WHY, not WHAT
 
-Environment:
-- Browser: Safari iOS 14.8
-- Device: iPhone 12
-- PHP: 8.1
-```
-
-### Suggesting Features
-
-We welcome feature suggestions! Please:
-1. Check [existing feature requests](https://github.com/constituant/constituant/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement)
-2. Describe the problem you're trying to solve
-3. Explain your proposed solution
-4. Consider implementation complexity
-
-**Good Feature Request:**
-```
-Title: Add email notifications when new bills are added
-
-Problem: Users miss new bills and forget to check back
-
-Proposed Solution:
-- Add email subscription option
-- Send digest email (daily or weekly)
-- Include bill summary and direct link
-
-Implementation Considerations:
-- Need email service (SMTP, SendGrid, etc.)
-- User email storage and privacy
-- Unsubscribe functionality required
-- Potential spam concerns
-```
-
-### Pull Requests
-
-1. **Fork the repository**
-2. **Create a feature branch**
-   ```bash
-   git checkout -b feature/amazing-feature
-   ```
-3. **Make your changes**
-4. **Test thoroughly**
-5. **Commit with clear messages**
-6. **Push and create PR**
-
-## 💻 Development Setup
-
-### Prerequisites
-- PHP 8.0+
-- MySQL 5.7+ or MariaDB 10.2+
-- Apache with mod_rewrite
-- Git
-
-### Local Setup
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/constituant/constituant.git
-   cd constituant
-   ```
-
-2. **Set up database**
-   ```bash
-   mysql -u root -p
-   CREATE DATABASE constituant;
-   USE constituant;
-   SOURCE database/schema.sql;
-   ```
-
-3. **Configure application**
-   ```bash
-   cp public_html/config/database.example.php public_html/config/database.php
-   cp public_html/config/config.example.php public_html/config/config.php
-   # Edit both files with your local credentials
-   ```
-
-4. **Start local server**
-   ```bash
-   cd public_html
-   php -S localhost:8000
-   ```
-
-5. **Visit** http://localhost:8000
-
-### Development Tools
-
-- **Code Editor**: VS Code recommended with PHP Intelephense extension
-- **Browser DevTools**: Chrome or Firefox for debugging
-- **Database Tool**: phpMyAdmin or MySQL Workbench
-- **API Testing**: Postman or Insomnia
-
-## 📝 Coding Standards
-
-### PHP
-
-Follow [PSR-12](https://www.php-fig.org/psr/psr-12/) coding standard:
-
-```php
-<?php
-// Good
-function calculateVotePercentage(int $votes, int $total): float
-{
-    if ($total === 0) {
-        return 0.0;
-    }
-
-    return round(($votes / $total) * 100, 2);
-}
-
-// Bad
-function calc_vote_perc($v,$t){
-  if($t==0)return 0;
-  return round(($v/$t)*100,2);
-}
-```
-
-**Guidelines:**
-- Use descriptive variable and function names
-- Add docblocks for functions
-- Use type hints
-- Handle errors gracefully
-- Sanitize all user input
-- Use prepared statements for SQL
-
-### JavaScript
-
-Use modern ES6+ features:
-
-```javascript
-// Good
-async function loadBills() {
-    try {
-        const response = await fetch('/api/get-votes.php');
-        const data = await response.json();
-
-        if (!data.success) {
-            throw new Error(data.error);
-        }
-
-        return data.bills;
-    } catch (error) {
-        console.error('Error loading bills:', error);
-        showErrorMessage(error.message);
-    }
-}
-
-// Bad
-function loadBills() {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/api/get-votes.php', false);
-    xhr.send();
-    return JSON.parse(xhr.responseText);
-}
-```
-
-**Guidelines:**
-- Use `const` and `let`, never `var`
-- Use arrow functions for callbacks
-- Use async/await for promises
-- Use template literals
-- Add comments for complex logic
-- Keep functions small and focused
-
-### CSS
-
-Use BEM methodology for class names:
-
-```css
-/* Good */
-.bill-card {}
-.bill-card__header {}
-.bill-card__title {}
-.bill-card--urgent {}
-
-/* Bad */
-.card {}
-.header {}
-.title {}
-.urgent-card {}
-```
-
-**Guidelines:**
-- Mobile-first approach
-- Use CSS custom properties (variables)
-- Avoid !important
-- Use semantic class names
-- Keep specificity low
-- Group related properties
-
-### HTML
-
-Use semantic HTML5:
-
-```html
-<!-- Good -->
-<article class="bill-card">
-    <header class="bill-card__header">
-        <h3 class="bill-card__title">Bill Title</h3>
-    </header>
-    <section class="bill-card__content">
-        <p>Bill summary...</p>
-    </section>
-    <footer class="bill-card__actions">
-        <button type="button">Vote</button>
-    </footer>
-</article>
-
-<!-- Bad -->
-<div class="card">
-    <div class="header">
-        <div class="title">Bill Title</div>
-    </div>
-    <div class="content">
-        <div>Bill summary...</div>
-    </div>
-    <div class="actions">
-        <div onclick="vote()">Vote</div>
-    </div>
-</div>
-```
-
-**Guidelines:**
-- Use semantic elements (article, section, nav, etc.)
-- Include ARIA labels for accessibility
-- Use meaningful alt text for images
-- Proper heading hierarchy (h1, h2, h3)
-- Form labels for all inputs
-
-## 🧪 Testing
-
-### Manual Testing Checklist
-
-Before submitting a PR, test:
-
-- [ ] Works on Chrome, Firefox, Safari
-- [ ] Works on mobile (iOS Safari, Chrome Android)
-- [ ] Responsive design (320px to 2560px)
-- [ ] Vote submission works
-- [ ] Vote results update correctly
-- [ ] Admin panel functions
-- [ ] No console errors
-- [ ] No PHP errors in logs
-- [ ] Accessibility (keyboard navigation, screen reader)
-- [ ] Performance (< 2s load time)
-
-### Testing on Different Devices
-
-- **Desktop**: Windows, macOS, Linux
-- **Mobile**: iPhone (Safari), Android (Chrome)
-- **Tablet**: iPad, Android tablet
-
-### API Testing
-
-Test API endpoints with curl:
-
+### 4. Test Thoroughly
+This platform handles democratic data. Testing is critical:
 ```bash
-# Get bills
-curl http://localhost:8000/api/get-votes.php
+# Run test suite
+php cron/test-import.php
 
-# Cast vote
-curl -X POST http://localhost:8000/api/cast-vote.php \
-  -H "Content-Type: application/json" \
-  -d '{"bill_id":"eu-dsa-2024","vote_type":"for"}'
-
-# Get results
-curl http://localhost:8000/api/get-results.php?bill_id=eu-dsa-2024
+# Test your specific change
+# Add test cases for new features
 ```
 
-## 📚 Documentation
+### 5. Document Your Changes
+- Update README.md if adding features
+- Update CHANGELOG.md with your changes
+- Add inline comments for complex logic
+- Update API documentation if relevant
 
-When adding features:
+## Development Setup
 
-1. **Update README.md** with new functionality
-2. **Add API documentation** for new endpoints
-3. **Update CHANGELOG.md** in [Unreleased] section
-4. **Add code comments** for complex logic
-5. **Include inline documentation** (docblocks)
+### Local Environment
+```bash
+# 1. Clone repo
+git clone https://github.com/djassoRaph/constituant.git
+cd constituant
 
-## 🎯 Project Structure
+# 2. Set up database
+mysql -u root -p < database/schema.sql
 
-```
-constituant/
-├── database/           # SQL schemas and migrations
-├── public_html/        # Web root
-│   ├── admin/         # Admin panel
-│   ├── api/           # API endpoints
-│   ├── assets/        # CSS, JS, images
-│   └── config/        # Configuration files
-├── README.md          # Main documentation
-├── CHANGELOG.md       # Version history
-├── CONTRIBUTING.md    # This file
-└── LICENSE            # AGPL-3.0 license
-```
+# 3. Configure
+cp config/database.php.example config/database.php
+cp config/sources.php.example config/sources.php
+# Edit with your credentials
 
-## 🚀 Pull Request Process
-
-1. **Update documentation** if needed
-2. **Update CHANGELOG.md** in [Unreleased]
-3. **Test thoroughly** (see checklist above)
-4. **Write clear commit messages**
-5. **Create PR with description**
-
-### Commit Message Format
-
-```
-type: Short description (50 chars max)
-
-Longer explanation if needed. Wrap at 72 characters.
-
-- Bullet points for multiple changes
-- Use present tense ("add" not "added")
-- Explain why, not just what
-
-Fixes #123
+# 4. Test
+php cron/test-import.php
 ```
 
-**Types:**
-- `feat`: New feature
-- `fix`: Bug fix
-- `docs`: Documentation only
-- `style`: Code style (formatting, no logic change)
-- `refactor`: Code refactoring
-- `perf`: Performance improvement
-- `test`: Adding tests
-- `chore`: Maintenance tasks
+### WSL Development (Recommended)
+If on Windows, use WSL (Windows Subsystem for Linux):
+```bash
+# Install PHP, MySQL, Apache in WSL
+sudo apt update
+sudo apt install php8.1 mysql-server apache2
 
-**Examples:**
-```
-feat: Add email notifications for new bills
-
-Implements email subscription system allowing users to receive
-daily or weekly digests of new legislation.
-
-- Add email field to user table
-- Create notification service
-- Add unsubscribe functionality
-- Include email templates
-
-Closes #45
+# Follow local environment steps above
 ```
 
+## Development Principles
+
+### 1. Build on Existing Work
+**Never recreate from scratch.** Always:
+- Read existing code first
+- Understand current implementation
+- Preserve previous work
+- Extend and improve
+
+### 2. Backend Before Frontend
+Get functionality working correctly before polishing UI:
+1. Database structure
+2. Business logic
+3. API endpoints
+4. Frontend integration
+5. UX improvements
+
+### 3. Automation First
+Manual processes don't scale:
+- Prefer cron jobs over manual triggers
+- Use database triggers for data consistency
+- Automate testing and deployment
+- Document automation setup
+
+### 4. Privacy by Design
+Every feature must respect user privacy:
+- Minimize data collection
+- Anonymous by default
+- GDPR compliant
+- Secure data storage
+
+## Pull Request Process
+
+### Before Submitting
+- [ ] Code follows style guidelines
+- [ ] Tests pass (`php cron/test-import.php`)
+- [ ] Documentation updated
+- [ ] CHANGELOG.md updated
+- [ ] Commit messages are clear
+
+### PR Template
+```markdown
+## Description
+Brief description of changes
+
+## Type of Change
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Documentation update
+- [ ] Performance improvement
+- [ ] Refactoring
+
+## Testing
+How did you test this?
+
+## Checklist
+- [ ] Code follows style guidelines
+- [ ] Tests pass
+- [ ] Documentation updated
+- [ ] CHANGELOG.md updated
 ```
-fix: Vote button not working on Safari iOS
 
-The confirmation modal wasn't appearing due to event delegation
-issue with touch events. Changed to direct event listeners.
+### Review Process
+1. Automated tests run
+2. Maintainer reviews code
+3. Discussion/feedback
+4. Revisions if needed
+5. Approval and merge
 
-Fixes #78
+## Code Areas
+
+### Frontend (`public/`)
+- Vanilla JavaScript (no frameworks for MVP)
+- Mobile-first responsive design
+- Progressive enhancement
+- Accessibility (WCAG 2.1 AA)
+
+**Key files**:
+- `index.php` - Main voting interface
+- `css/style.css` - Styles
+- `js/main.js` - Client-side logic
+
+### Backend (`api/`, `cron/`)
+- PHP 8.x
+- PDO for database (prepared statements)
+- Error handling and logging
+- Rate limiting and security
+
+**Key files**:
+- `cron/fetch-bills.php` - Main orchestrator
+- `cron/reclassify-bills.php` - Mistral AI integration
+- `api/*.php` - REST endpoints
+
+### Database (`database/`)
+- MySQL 8.0+
+- Migrations for schema changes
+- Triggers for data consistency
+- Indexes for performance
+
+**Important**: Test migrations on dev before production!
+
+### Admin Panel (`admin/`)
+- Simple, functional interface
+- CSRF protection required
+- Authentication required
+- Audit logging for actions
+
+## Mistral AI Integration
+
+Our AI classification uses Mistral's FREE tier:
+```php
+// Configuration in config/sources.php
+const MISTRAL_API_KEY = 'your_key';
+const MISTRAL_MODEL = 'mistral-small-latest';
+
+// Usage in lib/fetcher-base.php
+function classifyBillWithAI($title, $summary, $fullText = '') {
+    // Returns: theme, ai_summary, confidence
+}
 ```
 
-## ⚖️ Code of Conduct
+**Guidelines**:
+- Keep prompts efficient (free tier has limits)
+- Cache results (don't re-classify)
+- Handle API errors gracefully
+- Log classification performance
 
-### Our Pledge
+## Security Guidelines
 
-We pledge to make participation in our project harassment-free for everyone, regardless of:
-- Age
-- Body size
-- Disability
-- Ethnicity
-- Gender identity and expression
-- Level of experience
-- Nationality
-- Personal appearance
-- Race
-- Religion
-- Sexual identity and orientation
+### Critical Security Rules
+1. **SQL Injection**: Use PDO prepared statements ALWAYS
+2. **XSS**: Use `htmlspecialchars()` on ALL output
+3. **CSRF**: Implement tokens for state-changing operations
+4. **Rate Limiting**: Prevent abuse (10 votes/hour per IP)
+5. **Input Validation**: Never trust user input
 
-### Our Standards
+### Reporting Security Issues
+**DO NOT** open public issues for security vulnerabilities.
 
-**Positive behavior:**
-- Using welcoming and inclusive language
-- Being respectful of differing viewpoints
-- Gracefully accepting constructive criticism
-- Focusing on what's best for the community
-- Showing empathy towards others
+Email: security@constituant.fr (coming soon)
 
-**Unacceptable behavior:**
-- Trolling, insulting/derogatory comments, personal attacks
-- Public or private harassment
-- Publishing others' private information without permission
-- Other conduct inappropriate in a professional setting
+For now: Contact maintainer privately via GitHub.
 
-### Enforcement
+## Documentation
 
-Violations may be reported to contact@constituant.fr. All complaints will be reviewed and investigated.
+### What to Document
+- New features and their usage
+- API endpoints and parameters
+- Configuration options
+- Breaking changes
+- Migration guides
 
-## 🎓 Learning Resources
+### Where to Document
+- `README.md` - User-facing features
+- `CHANGELOG.md` - Version history
+- `.llms.txt` - AI context (for LLM assistants)
+- Inline comments - Complex logic
+- GitHub Wiki - Detailed guides (future)
 
-### PHP
-- [PHP.net Documentation](https://www.php.net/docs.php)
-- [PSR Standards](https://www.php-fig.org/psr/)
-- [PHP The Right Way](https://phptherightway.com/)
+## Community Guidelines
 
-### JavaScript
-- [MDN Web Docs](https://developer.mozilla.org/)
-- [JavaScript.info](https://javascript.info/)
-- [You Don't Know JS](https://github.com/getify/You-Dont-Know-JS)
+### Be Respectful
+This is a civic project. We welcome:
+- Constructive criticism
+- Diverse perspectives
+- Beginner questions
+- Different approaches
 
-### CSS
-- [CSS Tricks](https://css-tricks.com/)
-- [BEM Methodology](http://getbem.com/)
-- [Modern CSS](https://moderncss.dev/)
+We do not tolerate:
+- Personal attacks
+- Discrimination
+- Harassment
+- Bad faith arguments
 
-### Accessibility
-- [WCAG Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
-- [A11y Project](https://www.a11yproject.com/)
-- [WebAIM](https://webaim.org/)
+### Language
+- Primary: French (platform targets French/EU citizens)
+- Code/docs: English preferred for international collaboration
+- Issues/PRs: Either language is fine
 
-## 💡 Getting Help
+## Getting Help
 
-- **Questions**: Open a [GitHub Discussion](https://github.com/constituant/constituant/discussions)
-- **Bugs**: Create an [Issue](https://github.com/constituant/constituant/issues)
-- **Chat**: Join our Discord (coming soon)
-- **Email**: contact@constituant.fr
+### Before Asking
+1. Read README.md thoroughly
+2. Check existing Issues/Discussions
+3. Review code comments
+4. Try debugging yourself
 
-## 🎉 Recognition
+### Where to Ask
+- **Bugs**: GitHub Issues
+- **Questions**: GitHub Discussions
+- **Features**: GitHub Discussions → Issue after consensus
+- **Security**: Private contact (see above)
+
+### How to Ask
+Good questions include:
+- What you're trying to do
+- What you tried
+- What happened (with error messages)
+- Relevant code/configuration
+- Environment details (OS, PHP version, etc.)
+
+## Recognition
 
 Contributors will be:
-- Listed in README.md
-- Mentioned in release notes
+- Listed in CONTRIBUTORS.md
 - Credited in CHANGELOG.md
-- Appreciated forever! 💙
+- Thanked in release notes
 
-## 📜 License
+Major contributors may become maintainers.
 
-By contributing, you agree that your contributions will be licensed under the AGPL-3.0 License.
+## License
+
+By contributing, you agree that your contributions will be licensed under AGPL-3.0.
+
+This ensures:
+- Code remains open source forever
+- Modifications must be shared publicly
+- Platform cannot be privatized
 
 ---
 
-**Thank you for contributing to Constituant!** 🏛️
+## Quick Reference
 
-Every contribution, no matter how small, makes a difference in civic engagement.
+### Useful Commands
+```bash
+# Test system
+php cron/test-import.php
+
+# Manual bill import
+php cron/fetch-bills.php
+
+# Reclassify bills
+php cron/reclassify-bills.php --limit=10
+
+# View logs
+tail -f logs/bill-imports.log
+
+# Database access
+mysql -u root -p constituant
+```
+
+### File Structure
+```
+public/         # Frontend
+admin/          # Admin panel
+api/            # REST endpoints
+cron/           # Automation scripts
+config/         # Configuration
+database/       # Schema & migrations
+logs/           # Application logs
+```
+
+### Key Technologies
+- PHP 8.x + MySQL 8.0
+- Mistral AI (free tier)
+- Vanilla JS (no frameworks)
+- Cron for automation
+
+---
+
+**Thank you for contributing to democratic innovation!**
+
+*"We are all constituants" - capable of governance when given proper tools.*

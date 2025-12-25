@@ -1,0 +1,144 @@
+# Constituant - Civic Engagement Platform
+
+## Project Identity
+**Mission**: Transform French/EU citizens from passive voters to active governance participants
+**Name Origin**: French "constituant" = both "constituent" (voter) AND "constitution-maker"
+**Philosophy**: Inspired by Étienne Chouard's work on sortition and direct democracy
+**Vision**: "A weapon for the people against the opacity of political powers"
+**Legal**: Association loi 1901 (French non-profit), AGPL-3.0 license
+**Domain**: constituant.fr
+**Status**: PRODUCTION - Fully automated system running
+
+## Core Architecture
+**Stack**: PHP 8/MySQL on o2switch shared hosting, WSL dev environment
+**Why Traditional**: Rejected blockchain for simplicity, privacy, GDPR compliance
+**Database**: Traditional SQL with open-source transparency, no blockchain complexity
+
+## Key Features (LIVE)
+- Automated bill fetching from NosDéputés.fr, EU Parliament, La Fabrique de la Loi
+- Mistral AI classification (themes + citizen-friendly summaries) - FREE tier, ~95% confidence
+- Anonymous voting with real-time aggregate results
+- Theme-based filtering (15 categories: Économie, Santé, Environnement, etc.)
+- Mobile-first responsive UI
+- Cron-based automation (no manual intervention needed)
+- Database triggers for vote counting
+
+## Critical Design Decisions
+1. **Full Automation**: NO manual approval - bills flow automatically from API → classification → publication
+2. **AI Classification**: Mistral AI (free tier) handles theme categorization + plain-language summaries
+3. **Traditional DB over Blockchain**: Privacy, simplicity, GDPR compliance
+4. **Build on Existing**: Never recreate from scratch - always preserve and extend previous work
+5. **Backend First**: Get automated workflows right before polishing UI
+
+## Three-Phase Strategy
+**Phase 1 (CURRENT)**: Transparency - legislative digests + voting + comparison
+**Phase 2**: Accountability - representative scorecards + petition thresholds
+**Phase 3**: Transformation - constituent assembly simulator + sortition experiments
+
+## Technical Learnings
+- French legislative URLs need current period + permanent "dossier" not temp "texte"
+- Distinction: "projets de loi" (government) vs "propositions de loi" (parliamentary)
+- o2switch requires specific folder configs for addon domains
+- Some environments need 127.0.0.1 not localhost
+- Mistral AI classification extremely effective at ~95% confidence
+
+## Current File Structure
+```
+/
+├── cron/
+│   ├── fetch-bills.php          # Main orchestrator (LIVE)
+│   ├── reclassify-bills.php     # Mistral AI classifier (LIVE)
+│   ├── lib/fetcher-base.php     # Shared functions + Mistral integration
+│   └── sources/                 # API fetchers for each source
+├── admin/                       # Admin panel (LIVE)
+├── api/                         # REST endpoints (LIVE)
+├── public/                      # Frontend (LIVE)
+├── config/                      # DB + sources config
+└── database/
+    ├── schema.sql               # Current schema (LIVE)
+    └── migrations/              # Historical changes
+```
+
+## Database Schema (Simplified)
+```sql
+bills (
+    id, title, summary, full_text_url,
+    level, chamber, theme,
+    ai_summary, ai_processed_at,  -- Mistral outputs
+    vote_datetime, status,
+    yes_count, no_count, abstain_count  -- Auto-updated by triggers
+)
+
+votes (
+    bill_id, vote_type, voter_ip, voted_at
+    -- UNIQUE(bill_id, voter_ip) prevents double voting
+)
+```
+
+## Recent Work (Production)
+✅ Full automation working (fetch → classify → publish)
+✅ Mistral AI integration (free tier, high quality)
+✅ Cron jobs configured and running
+✅ Frontend with theme filtering
+✅ Twitter/Facebook sharing functional
+✅ Vote counting with database triggers
+✅ Mobile-responsive UI improvements
+
+## Development Approach
+- **Methodical**: Test existing before changing, comprehensive diagnosis
+- **Preserve Work**: Build on previous sessions, never start from scratch
+- **Backend Priority**: Workflows before aesthetics
+- **Systematic**: Request summaries before rebuilds
+
+## Mistral AI Integration
+- **Model**: mistral-small-latest (FREE tier)
+- **Purpose**: Theme classification + citizen-friendly summaries
+- **Performance**: ~95% confidence, highly effective
+- **Themes**: 15 predefined categories (Affaires sociales, Économie, etc.)
+- **Output**: theme, ai_summary, confidence score
+
+## User Adoption Strategy
+- Two-tier membership: basic (anonymous voting) + verified (weighted voting)
+- Start with low barrier, increase engagement over time
+- Privacy-by-design prevents weaponization
+
+## Quick Commands
+```bash
+# Test system
+php cron/test-import.php
+
+# Manual import
+php cron/fetch-bills.php
+
+# Reclassify existing bills
+php cron/reclassify-bills.php --limit=10
+
+# View logs
+tail -f logs/bill-imports.log
+```
+
+## Key Contact Points
+- GitHub: github.com/djassoRaph/constituant
+- Production: constituant.fr
+- Dev: WSL (Ubuntu) local environment
+
+## Developer Notes
+- ALWAYS read existing code before modifying
+- Database changes require testing on both dev and prod
+- Mistral API key in config (free tier, no costs)
+- Cron runs every 6 hours
+- Never recreate what exists - build on it
+
+## Known Issues (Minor)
+- Admin panel JavaScript needs cleanup
+- Occasional DB connection timeouts
+- EU Parliament API sometimes returns 406 (header issues)
+
+## Success Metrics
+- Phase 1: 100 active users, 1000 votes
+- Phase 2: 10,000 users, representative responses
+- Phase 3: 100,000+ users, sortition experiments
+
+---
+Last Updated: December 2025
+Current Status: Production deployment, fully automated
