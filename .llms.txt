@@ -83,6 +83,7 @@ votes (
 ✅ Twitter/Facebook sharing functional
 ✅ Vote counting with database triggers
 ✅ Mobile-responsive UI improvements
+⚠️ Minor bugs: admin panel JS, occasional DB connection issues
 
 ## Development Approach
 - **Methodical**: Test existing before changing, comprehensive diagnosis
