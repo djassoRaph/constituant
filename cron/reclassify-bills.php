@@ -24,7 +24,7 @@ if (php_sapi_name() !== 'cli') {
 define('CONSTITUANT_APP', true);
 
 // Load dependencies
-require_once __DIR__ . '/../lib/fetcher-base.php';
+require_once __DIR__ . '/lib/fetcher-base.php';
 
 // Parse command line arguments
 $options = getopt('', ['limit::', 'force']);
@@ -121,7 +121,7 @@ try {
 
         // Call Mistral AI
         echo "  Calling Mistral AI..." . PHP_EOL;
-        $aiResult = classifyBillWithAI(
+        $aiResult = classifyBillWithRetry(
             $bill['title'],
             $bill['summary'] ?? '',
             $fullText
@@ -133,18 +133,20 @@ try {
                 UPDATE pending_bills
                 SET theme = :theme,
                     ai_summary = :summary,
+                    mistral_ai_json_response = :json_response,
                     ai_processed_at = NOW()
                 WHERE id = :id
             ");
 
             $updateStmt->execute([
                 ':theme' => $aiResult['theme'],
-                ':summary' => $aiResult['summary'],
+                ':summary' => $aiResult['abstract'], // Short hook for card preview
+                ':json_response' => $aiResult['mistral_ai_json_response'] ?? null,
                 ':id' => $bill['id'],
             ]);
 
             echo "  ✓ Success: Classified as '{$aiResult['theme']}'" . PHP_EOL;
-            echo "  Summary: " . substr($aiResult['summary'], 0, 100) . "..." . PHP_EOL;
+            echo "  Abstract: " . substr($aiResult['abstract'], 0, 100) . "..." . PHP_EOL;
             logMessage("Bill {$bill['id']} classified as: {$aiResult['theme']}");
             $stats['success']++;
 

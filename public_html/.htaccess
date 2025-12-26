@@ -219,6 +219,11 @@ AddCharset UTF-8 .html .css .js .xml .json .rss .atom
 </IfModule>
 
 # ============================================================================
+# API Routing - Route /api/ requests to root-level api/ directory
+# ============================================================================
+RewriteRule ^api/(.*)$ ../api/$1 [L]
+
+# ============================================================================
 # Pretty URLs (if needed in future)
 # ============================================================================
 # Example: Redirect /bill/eu-dsa-2024 to /index.php?bill=eu-dsa-2024

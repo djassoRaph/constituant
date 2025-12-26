@@ -10,7 +10,7 @@
  */
 
 // Load API keys from secure config file
-require_once __DIR__ . '/../../config/api-keys.php';
+require_once __DIR__ . '/config/api-keys.php';
 
 // Predefined legislative categories
 define('LEGISLATIVE_CATEGORIES', [
@@ -56,7 +56,7 @@ function classifyBillWithAI($title, $description, $fullText) {
     // Build the AI prompt
     $categoriesList = implode(', ', LEGISLATIVE_CATEGORIES);
 
-    $prompt = "Classify this French legislation and provide structured information.
+    $prompt = "Classify this French legislation code, provide structured information and a brief summary.
 
 Categories: {$categoriesList}
 
@@ -67,14 +67,24 @@ Full Text: " . substr($fullText, 0, 3000) . "
 Return ONLY valid JSON with this EXACT structure (no markdown, no backticks):
 {
   \"theme\": \"category name from the list above\",
-  \"category name\", must be EXACTLY as in the list,
-  \"summary\": \"Plain French explanation in 2-3 sentences. First sentence max 20 words.\",
+  \"abstract\": \"Ultra-short hook (max 20 words)\",
+  \"summary\": \"Full explanation (2-3 sentences)\",
   \"pour\": \"One or two key arguments IN FAVOR, simple.\",
   \"contre\": \"One or two key arguments AGAINST, simple.\",
   \"concerne\": [\"Specific group 1\", \"Specific group 2\", \"Specific group 3\"]
 }
 
-For 'concerne': List 3-5 SPECIFIC groups affected (NOT 'tous les citoyens'). 
+CRITICAL DISTINCTIONS:
+- 'abstract' = Ultra-short hook (20 words max) - what users see when scrolling
+- 'summary' = Full explanation (2-3 sentences) - what users see when they expand details
+- 'abstract' and 'summary' MUST be DIFFERENT texts with different information depth
+
+RULES:
+- 'theme' must be ONE of the categories listed above, with EXACT spelling
+- 'abstract' is SHORT and catchy (e.g., \"Réduit les cotisations sociales des entreprises pendant 6 mois.\")
+- 'summary' is DETAILED and informative (e.g., \"Cette loi propose une réduction temporaire des cotisations sociales pour les entreprises. Elle vise à soutenir leur trésorerie pendant une période difficile. Les PME et startups sont particulièrement concernées.\")
+- 'pour' and 'contre' are ONE sentence each, simple language, no jargon.
+For 'concerne': List 3-5 SPECIFIC groups affected (NOT 'tous les citoyens'), think jobs, or demographic. 
 Examples: 'Les propriétaires d'animaux domestiques', 'Les PME de moins de 50 salariés', 'Les étudiants en médecine'.";
 
     // Prepare API request payload
@@ -223,8 +233,9 @@ Examples: 'Les propriétaires d'animaux domestiques', 'Les PME de moins de 50 sa
     // Return successful classification with all data
     return [
         'theme' => $theme,
-        'summary' => trim($aiResult['summary']), // For backward compatibility (ai_summary column)
-        'json_response' => $jsonResponse, // For new mistral_ai_json_response column
+        'abstract' => trim($aiResult['abstract']),
+        'summary' => trim($aiResult['summary']),
+        'json_response' => $jsonResponse,
         'error' => null
     ];
 }

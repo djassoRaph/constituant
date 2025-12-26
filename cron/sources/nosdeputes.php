@@ -104,9 +104,10 @@ function fetchNosDePutes(): array
             
             // Add AI results to bill data
             $billData['theme'] = $aiResult['theme'];
-            $billData['ai_summary'] = $aiResult['summary'];
+            $billData['ai_summary'] = $aiResult['abstract']; // Short hook for card preview
             $billData['ai_confidence'] = $aiResult['confidence'];
             $billData['ai_processed_at'] = date('Y-m-d H:i:s');
+            $billData['mistral_ai_json_response'] = $aiResult['mistral_ai_json_response'] ?? null;
             
             if ($aiResult['error']) {
                 logMessage("AI classification had errors: {$aiResult['error']}", 'WARNING');

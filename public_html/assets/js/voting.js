@@ -148,7 +148,7 @@ function handleVoteSuccess(billId, voteType, data) {
 
     // Refresh results from server
     setTimeout(() => {
-        refreshResults();
+        loadBills();
     }, 500);
 
     // Store vote in localStorage (for persistence across page loads)

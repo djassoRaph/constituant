@@ -13,8 +13,8 @@ if (!defined('CONSTITUANT_APP')) {
 }
 
 // Load configuration
-require_once __DIR__ . '/../../config/database.php';
-require_once __DIR__ . '/../../config/api-keys.php';
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/config/api-keys.php';
 require_once __DIR__ . '/mistral_ai.php';
 
 // ============================================================================
@@ -91,7 +91,7 @@ function saveBillToProduction(array $billData): array
                     title = ?,
                     summary = ?,
                     ai_summary = ?,
-                    json_response = ?,
+                    mistral_ai_json_response = ?,
                     full_text_url = ?,
                     theme = ?,
                     ai_confidence = ?,
@@ -108,6 +108,7 @@ function saveBillToProduction(array $billData): array
                 $billData['title'],
                 $billData['summary'] ?? null,
                 $billData['ai_summary'] ?? null,
+                $billData['mistral_ai_json_response'] ?? null,
                 $billData['full_text_url'] ?? null,
                 $billData['theme'] ?? 'Sans catégorie',
                 $billData['ai_confidence'] ?? null,
@@ -129,10 +130,10 @@ function saveBillToProduction(array $billData): array
         // Insert new bill
         $insertQuery = "
             INSERT INTO bills (
-                id, title, summary, ai_summary, json_response,full_text_url,
+                id, title, summary, ai_summary, mistral_ai_json_response, full_text_url,
                 theme, ai_confidence, level, chamber, vote_datetime,
                 status, source, external_id, ai_processed_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ";
         
         $stmt = $pdo->prepare($insertQuery);
@@ -141,6 +142,7 @@ function saveBillToProduction(array $billData): array
             $billData['title'],
             $billData['summary'] ?? null,
             $billData['ai_summary'] ?? null,
+            $billData['mistral_ai_json_response'] ?? null,
             $billData['full_text_url'] ?? null,
             $billData['theme'] ?? 'Sans catégorie',
             $billData['ai_confidence'] ?? null,
@@ -192,8 +194,9 @@ function classifyBillWithRetry(string $title, string $summary, string $fullText 
             // Success!
             return [
                 'theme' => $result['theme'],
-                'summary' => $result['summary'],
-                'json_response' => $result['json_response'],
+                'abstract' => $result['abstract'], // Short hook (20 words max) - for card preview
+                'summary' => $result['summary'], // Full explanation (2-3 sentences) - for expanded section
+                'mistral_ai_json_response' => $result['json_response'] ?? null,
                 'confidence' => 0.95, // Mistral typically returns high confidence
                 'error' => null
             ];

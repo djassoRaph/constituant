@@ -152,6 +152,8 @@ function fetchLaFabrique(): array
                 'status' => 'upcoming',
                 'theme' => 'Sans catégorie', // Will be set by AI
                 'ai_summary' => null,
+                'mistral_ai_json_response' => null,
+                
             ];
             
             echo "📋 Processing: " . substr($titre, 0, 60) . "...\n";
@@ -167,9 +169,10 @@ function fetchLaFabrique(): array
                 
                 if ($aiResult['error'] === null) {
                     $billData['theme'] = $aiResult['theme'];
-                    $billData['ai_summary'] = $aiResult['summary'];
+                    $billData['ai_summary'] = $aiResult['abstract']; // Short hook for card preview
                     $billData['ai_confidence'] = 0.95;
                     $billData['ai_processed_at'] = date('Y-m-d H:i:s');
+                    $billData['mistral_ai_json_response'] = $aiResult['mistral_ai_json_response'] ?? null;
                     echo "  ✓ AI: {$aiResult['theme']}\n";
                 } else {
                     echo "  ⚠️  AI failed: {$aiResult['error']}\n";

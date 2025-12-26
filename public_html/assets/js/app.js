@@ -93,6 +93,34 @@ function renderBills(bills) {
     setupReadMoreButtons();
 }
 
+
+
+/**
+ * Toggle bill details (expand/collapse)
+ */
+function toggleBillDetails(billId) {
+    const details = document.getElementById(`details-${billId}`);
+    const btn = document.querySelector(`[onclick="toggleBillDetails('${billId}')"]`);
+    
+    if (!details || !btn) return;
+
+    const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+    
+    if (isExpanded) {
+        // Collapse
+        details.style.display = 'none';
+        btn.setAttribute('aria-expanded', 'false');
+        btn.querySelector('.expand-text').style.display = '';
+        btn.querySelector('.collapse-text').style.display = 'none';
+    } else {
+        // Expand
+        details.style.display = 'block';
+        btn.setAttribute('aria-expanded', 'true');
+        btn.querySelector('.expand-text').style.display = 'none';
+        btn.querySelector('.collapse-text').style.display = '';
+    }
+}
+
 /**
  * Create HTML for a single bill card
  */
@@ -109,8 +137,23 @@ function createBillCard(bill) {
     const flag = bill.level === 'eu' ? '🇪🇺' : '🇫🇷';
     const levelLabel = bill.level === 'eu' ? 'UE' : 'France';
 
-    // Use AI summary if available, fallback to regular summary
-    const summary = bill.ai_summary || bill.summary || 'Aucun résumé disponible';
+    // Get first sentence of AI summary (max 20 words for preview)
+    let shortSummary = bill.ai_summary || bill.summary || 'Aucun résumé disponible';
+    const sentences = shortSummary.split(/[.!?]/);
+    shortSummary = sentences[0] + (sentences[0] ? '.' : '');
+    
+    // Truncate to ~20 words
+    const words = shortSummary.split(' ');
+    if (words.length > 20) {
+        shortSummary = words.slice(0, 20).join(' ') + '...';
+    }
+
+    // Full summary for expanded view
+    const fullSummary = bill.ai_summary || bill.summary || '';
+
+    // Parse AI data
+    const aiData = bill.ai_data || {};
+    const hasAiData = aiData && (aiData.pour || aiData.contre || aiData.concerne);
 
     return `
         <article class="bill-card" data-bill-id="${bill.id}">
@@ -148,28 +191,75 @@ function createBillCard(bill) {
                     ` : ''}
                 </h3>
 
-                ${bill.ai_summary ? `
-                    <div class="ai-badge">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-                        </svg>
-                        Résumé IA
-                        ${bill.ai_confidence ? `(${Math.round(bill.ai_confidence * 100)}% confiance)` : ''}
-                    </div>
+                <!-- Short Summary (always visible) -->
+                <div class="bill-summary-short">
+                    ${escapeHtml(shortSummary)}
+                </div>
+
+                <!-- Expand Button -->
+                ${hasAiData ? `
+                    <button class="expand-btn" onclick="toggleBillDetails('${bill.id}')" aria-expanded="false" aria-controls="details-${bill.id}">
+                        <span class="expand-text">▼ En savoir plus</span>
+                        <span class="collapse-text" style="display:none;">▲ Réduire</span>
+                    </button>
                 ` : ''}
 
-                <div class="bill-summary">
-                    <div class="summary-short" data-bill="${bill.id}">
-                        ${escapeHtml(summary)}
-                    </div>
-                    ${summary.length > 200 ? `
-                        <button class="read-more-btn" data-bill="${bill.id}">
-                            Lire plus
-                        </button>
-                    ` : ''}
+                <!-- Expandable Details (hidden by default) -->
+                <div id="details-${bill.id}" class="bill-details" style="display:none;">
+                    ${hasAiData ? `
+                        <!-- Full Summary -->
+                        <div class="detail-section">
+                            <h4>📋 Résumé</h4>
+                            <p>${escapeHtml(fullSummary)}</p>
+                        </div>
+
+                        <!-- Arguments -->
+                        ${aiData.pour || aiData.contre ? `
+                            <div class="detail-section">
+                                <h4>⚖️ Arguments principaux</h4>
+                                ${aiData.pour ? `
+                                    <div class="argument argument-pour">
+                                        <strong>✅ Pour:</strong> ${escapeHtml(aiData.pour)}
+                                    </div>
+                                ` : ''}
+                                ${aiData.contre ? `
+                                    <div class="argument argument-contre">
+                                        <strong>❌ Contre:</strong> ${escapeHtml(aiData.contre)}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+
+                        <!-- Qui est concerné -->
+                        ${aiData.concerne && aiData.concerne.length > 0 ? `
+                            <div class="detail-section">
+                                <h4>🎯 Qui est concerné?</h4>
+                                <ul class="stakeholders-list">
+                                    ${aiData.concerne.map(group => `<li>${escapeHtml(group)}</li>`).join('')}
+                                </ul>
+                            </div>
+                        ` : ''}
+
+                        <!-- Full Text Link -->
+                        ${bill.full_text_url ? `
+                            <div class="detail-section">
+                                <a href="${escapeHtml(bill.full_text_url)}" target="_blank" rel="noopener noreferrer" class="full-text-link">
+                                    🔗 Lire le texte complet
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                        <polyline points="15 3 21 3 21 9"></polyline>
+                                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                                    </svg>
+                                </a>
+                            </div>
+                        ` : ''}
+                    ` : `
+                        <p class="no-ai-data">Résumé détaillé non disponible</p>
+                    `}
                 </div>
             </div>
 
+            <!-- Vote Buttons / Results (same as before) -->
             ${hasVoted ? `
                 <div class="user-voted">
                     ✓ Vous avez voté : <strong>${getVoteLabel(userVoted)}</strong>
@@ -367,6 +457,7 @@ function showToast(message, type = 'info') {
 window.initializeApp = initializeApp;
 window.switchTab = switchTab;
 window.loadBills = loadBills;
+window.toggleBillDetails = toggleBillDetails;
 window.getVoteLabel = getVoteLabel;
 window.escapeHtml = escapeHtml;
 window.showToast = showToast;

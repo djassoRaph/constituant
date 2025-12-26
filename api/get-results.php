@@ -29,8 +29,8 @@
  * @package Constituant
  */
 
-require_once __DIR__ . '/../../cron/lib/config/config.php';
-require_once __DIR__ . '/../../cron/lib/config/database.php';
+require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../config/database.php';
 
 // Only allow GET requests
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
