@@ -15,7 +15,7 @@ if (!defined('CONSTITUANT_APP')) {
 }
 
 // Mistral AI Configuration
-define('MISTRAL_API_KEY', 'PLo34vkCoWGgJrqneKWXSqzm2TjAMUWr');
+define('MISTRAL_API_KEY', '');
 define('MISTRAL_API_ENDPOINT', 'https://api.mistral.ai/v1/chat/completions');
 define('MISTRAL_MODEL', 'mistral-small-latest');
 define('MISTRAL_TIMEOUT', 30);
