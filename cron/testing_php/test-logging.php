@@ -8,7 +8,7 @@
 
 define('CONSTITUANT_APP', true);
 
-require_once __DIR__ . '/lib/fetcher-base.php';
+require_once __DIR__ . '/../lib/fetcher-base.php';
 
 echo "Testing Logging Functionality" . PHP_EOL;
 echo str_repeat('=', 80) . PHP_EOL;

@@ -13,8 +13,8 @@ if (!defined('CONSTITUANT_APP')) {
 }
 
 // Load configuration
-require_once __DIR__ . '/../../public_html/config/database.php';
-require_once __DIR__ . '/../../public_html/config/api-keys.php';
+require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../../config/api-keys.php';
 require_once __DIR__ . '/mistral_ai.php';
 
 // ============================================================================
@@ -91,6 +91,7 @@ function saveBillToProduction(array $billData): array
                     title = ?,
                     summary = ?,
                     ai_summary = ?,
+                    json_response = ?,
                     full_text_url = ?,
                     theme = ?,
                     ai_confidence = ?,
@@ -128,7 +129,7 @@ function saveBillToProduction(array $billData): array
         // Insert new bill
         $insertQuery = "
             INSERT INTO bills (
-                id, title, summary, ai_summary, full_text_url,
+                id, title, summary, ai_summary, json_response,full_text_url,
                 theme, ai_confidence, level, chamber, vote_datetime,
                 status, source, external_id, ai_processed_at
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -192,6 +193,7 @@ function classifyBillWithRetry(string $title, string $summary, string $fullText 
             return [
                 'theme' => $result['theme'],
                 'summary' => $result['summary'],
+                'json_response' => $result['json_response'],
                 'confidence' => 0.95, // Mistral typically returns high confidence
                 'error' => null
             ];

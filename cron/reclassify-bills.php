@@ -24,7 +24,7 @@ if (php_sapi_name() !== 'cli') {
 define('CONSTITUANT_APP', true);
 
 // Load dependencies
-require_once __DIR__ . '/lib/fetcher-base.php';
+require_once __DIR__ . '/../lib/fetcher-base.php';
 
 // Parse command line arguments
 $options = getopt('', ['limit::', 'force']);

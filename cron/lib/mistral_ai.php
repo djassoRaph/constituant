@@ -10,7 +10,7 @@
  */
 
 // Load API keys from secure config file
-require_once __DIR__ . '/../../public_html/config/api-keys.php';
+require_once __DIR__ . '/../../config/api-keys.php';
 
 // Predefined legislative categories
 define('LEGISLATIVE_CATEGORIES', [
@@ -40,7 +40,7 @@ define('LEGISLATIVE_CATEGORIES', [
  * @param string $title The bill title
  * @param string $description The bill description/summary
  * @param string $fullText The complete legislative text
- * @return array Associative array with 'theme', 'summary', and 'error' keys
+ * @return array Associative array with 'theme', 'summary', 'json_response', and 'error' keys
  */
 function classifyBillWithAI($title, $description, $fullText) {
     // Validate inputs
@@ -48,6 +48,7 @@ function classifyBillWithAI($title, $description, $fullText) {
         return [
             'theme' => 'Sans catégorie',
             'summary' => null,
+            'json_response' => null,
             'error' => 'Title and description are required'
         ];
     }
@@ -55,7 +56,7 @@ function classifyBillWithAI($title, $description, $fullText) {
     // Build the AI prompt
     $categoriesList = implode(', ', LEGISLATIVE_CATEGORIES);
 
-    $prompt = "Classify this French legislation into ONE category and provide a brief summary.
+    $prompt = "Classify this French legislation and provide structured information.
 
 Categories: {$categoriesList}
 
@@ -63,7 +64,18 @@ Title: {$title}
 Description: {$description}
 Full Text: " . substr($fullText, 0, 3000) . "
 
-Return ONLY valid JSON: {\"theme\": \"category name\", \"summary\": \"plain French explanation in 2-3 sentences\"}";
+Return ONLY valid JSON with this EXACT structure (no markdown, no backticks):
+{
+  \"theme\": \"category name from the list above\",
+  \"category name\", must be EXACTLY as in the list,
+  \"summary\": \"Plain French explanation in 2-3 sentences. First sentence max 20 words.\",
+  \"pour\": \"One or two key arguments IN FAVOR, simple.\",
+  \"contre\": \"One or two key arguments AGAINST, simple.\",
+  \"concerne\": [\"Specific group 1\", \"Specific group 2\", \"Specific group 3\"]
+}
+
+For 'concerne': List 3-5 SPECIFIC groups affected (NOT 'tous les citoyens'). 
+Examples: 'Les propriétaires d'animaux domestiques', 'Les PME de moins de 50 salariés', 'Les étudiants en médecine'.";
 
     // Prepare API request payload
     $payload = [
@@ -87,6 +99,7 @@ Return ONLY valid JSON: {\"theme\": \"category name\", \"summary\": \"plain Fren
         return [
             'theme' => 'Sans catégorie',
             'summary' => null,
+            'json_response' => null,
             'error' => $errorMsg
         ];
     }
@@ -116,6 +129,7 @@ Return ONLY valid JSON: {\"theme\": \"category name\", \"summary\": \"plain Fren
         return [
             'theme' => 'Sans catégorie',
             'summary' => null,
+            'json_response' => null,
             'error' => $errorMsg
         ];
     }
@@ -127,6 +141,7 @@ Return ONLY valid JSON: {\"theme\": \"category name\", \"summary\": \"plain Fren
         return [
             'theme' => 'Sans catégorie',
             'summary' => null,
+            'json_response' => null,
             'error' => $errorMsg
         ];
     }
@@ -140,6 +155,7 @@ Return ONLY valid JSON: {\"theme\": \"category name\", \"summary\": \"plain Fren
         return [
             'theme' => 'Sans catégorie',
             'summary' => null,
+            'json_response' => null,
             'error' => $errorMsg
         ];
     }
@@ -151,6 +167,7 @@ Return ONLY valid JSON: {\"theme\": \"category name\", \"summary\": \"plain Fren
         return [
             'theme' => 'Sans catégorie',
             'summary' => null,
+            'json_response' => null,
             'error' => $errorMsg
         ];
     }
@@ -171,17 +188,19 @@ Return ONLY valid JSON: {\"theme\": \"category name\", \"summary\": \"plain Fren
         return [
             'theme' => 'Sans catégorie',
             'summary' => null,
+            'json_response' => null,
             'error' => $errorMsg
         ];
     }
 
-    // Validate response structure
+    // Validate response structure - check for required fields
     if (!isset($aiResult['theme']) || !isset($aiResult['summary'])) {
         $errorMsg = 'AI response missing required fields (theme or summary)';
         error_log("Mistral AI Error: {$errorMsg}");
         return [
             'theme' => 'Sans catégorie',
             'summary' => null,
+            'json_response' => null,
             'error' => $errorMsg
         ];
     }
@@ -193,10 +212,19 @@ Return ONLY valid JSON: {\"theme\": \"category name\", \"summary\": \"plain Fren
         $theme = 'Sans catégorie';
     }
 
-    // Return successful classification
+    // Prepare the full JSON response for storage
+    $jsonResponse = json_encode([
+        'summary' => trim($aiResult['summary'] ?? ''),
+        'pour' => trim($aiResult['pour'] ?? ''),
+        'contre' => trim($aiResult['contre'] ?? ''),
+        'concerne' => $aiResult['concerne'] ?? []
+    ], JSON_UNESCAPED_UNICODE);
+
+    // Return successful classification with all data
     return [
         'theme' => $theme,
-        'summary' => trim($aiResult['summary']),
+        'summary' => trim($aiResult['summary']), // For backward compatibility (ai_summary column)
+        'json_response' => $jsonResponse, // For new mistral_ai_json_response column
         'error' => null
     ];
 }

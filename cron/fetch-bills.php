@@ -26,11 +26,11 @@ define('CONSTITUANT_APP', true);
 $scriptStartTime = microtime(true);
 
 // Load dependencies
-require_once __DIR__ . '/lib/fetcher-base.php';
+require_once __DIR__ . '/../lib/fetcher-base.php';
 
 // Load source fetchers
-require_once __DIR__ . '/sources/nosdeputes.php';
-require_once __DIR__ . '/sources/lafabrique.php';
+require_once __DIR__ . '/../sources/nosdeputes.php';
+require_once __DIR__ . '/../sources/lafabrique.php';
 
 // Output header
 echo str_repeat('=', 80) . PHP_EOL;

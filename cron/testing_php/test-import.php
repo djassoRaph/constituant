@@ -22,7 +22,7 @@ echo "Constituant - Import System Test" . PHP_EOL;
 echo str_repeat('=', 80) . PHP_EOL . PHP_EOL;
 
 // Load dependencies
-require_once __DIR__ . '/lib/fetcher-base.php';
+require_once __DIR__ . '/../lib/fetcher-base.php';
 
 $errors = [];
 $warnings = [];
@@ -218,7 +218,7 @@ echo "[ 8 ] Testing live data fetch (limited)..." . PHP_EOL;
 echo "      Fetching 5 bills from NosDéputés.fr..." . PHP_EOL;
 
 try {
-    require_once __DIR__ . '/sources/nosdeputes.php';
+    require_once __DIR__ . '/../sources/nosdeputes.php';
 
     // Temporarily reduce max bills
     $originalMax = IMPORT_SETTINGS['max_bills_per_source'];

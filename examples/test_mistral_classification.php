@@ -6,7 +6,7 @@
  * to automatically classify and summarize legislative bills.
  */
 
-require_once __DIR__ . '/../public_html/includes/mistral_ai.php';
+require_once __DIR__ . '/../lib/mistral_ai.php';
 
 // Example 1: Single Bill Classification
 echo "=== Example 1: Single Bill Classification ===\n\n";
