@@ -219,9 +219,9 @@ AddCharset UTF-8 .html .css .js .xml .json .rss .atom
 </IfModule>
 
 # ============================================================================
-# API Routing - Route /api/ requests to root-level api/ directory
+# API Routing - Allow direct access to api/ directory
 # ============================================================================
-RewriteRule ^api/(.*)$ ../api/$1 [L]
+# API files are already in /api/ subdirectory, no rewrite needed
 
 # ============================================================================
 # Pretty URLs (if needed in future)

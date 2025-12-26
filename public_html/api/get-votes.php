@@ -47,8 +47,40 @@
  * @package Constituant
  */
 
+// Start output buffering to catch any errors
+ob_start();
+
+// Set error handler to return JSON
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
+    ob_clean();
+    http_response_code(500);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => false,
+        'error' => "PHP Error: $errstr in $errfile on line $errline"
+    ]);
+    exit;
+});
+
+// Set exception handler to return JSON
+set_exception_handler(function($exception) {
+    ob_clean();
+    http_response_code(500);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => false,
+        'error' => $exception->getMessage(),
+        'file' => $exception->getFile(),
+        'line' => $exception->getLine()
+    ]);
+    exit;
+});
+
 require_once __DIR__ . '/../../cron/lib/config/config.php';
 require_once __DIR__ . '/../../cron/lib/config/database.php';
+
+// Clean output buffer before sending JSON
+ob_end_clean();
 
 // Only allow GET requests
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
