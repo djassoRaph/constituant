@@ -8,7 +8,12 @@ let currentShareBill = null;
 /**
  * Open share modal
  */
-function openShareModal(billId) {
+function openShareModal(billId, event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
     const bill = AppState.bills.find(b => b.id === billId);
     if (!bill) return;
 
@@ -16,7 +21,7 @@ function openShareModal(billId) {
 
     // Update modal content
     document.getElementById('share-title').textContent = truncateText(bill.title, 100);
-    
+
     // Generate share URL
     const shareUrl = `${window.location.origin}/?bill=${encodeURIComponent(billId)}`;
     document.getElementById('share-url').value = shareUrl;
@@ -28,7 +33,12 @@ function openShareModal(billId) {
 /**
  * Close share modal
  */
-function closeShareModal() {
+function closeShareModal(event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
     document.getElementById('share-modal').classList.add('hidden');
     currentShareBill = null;
 }
@@ -36,7 +46,12 @@ function closeShareModal() {
 /**
  * Share on Twitter
  */
-function shareOnTwitter() {
+function shareOnTwitter(event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
     if (!currentShareBill) return;
 
     const shareUrl = `${window.location.origin}/?bill=${encodeURIComponent(currentShareBill.id)}`;
@@ -48,28 +63,38 @@ ${truncateText(summary, 150)}
 Votez sur Constituant 👇`;
 
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl)}`;
-    
+
     window.open(twitterUrl, '_blank', 'width=550,height=420');
 }
 
 /**
  * Share on Facebook
  */
-function shareOnFacebook() {
+function shareOnFacebook(event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
     if (!currentShareBill) return;
 
     const shareUrl = `${window.location.origin}/?bill=${encodeURIComponent(currentShareBill.id)}`;
     const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
-    
+
     window.open(facebookUrl, '_blank', 'width=550,height=420');
 }
 
 /**
  * Copy share link to clipboard
  */
-async function copyShareLink() {
+async function copyShareLink(event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
     const input = document.getElementById('share-url');
-    
+
     try {
         // Try modern clipboard API
         await navigator.clipboard.writeText(input.value);
@@ -79,7 +104,7 @@ async function copyShareLink() {
         // Fallback to select + copy
         input.select();
         input.setSelectionRange(0, 99999); // For mobile
-        
+
         try {
             document.execCommand('copy');
             showToast('Lien copié !', 'success');

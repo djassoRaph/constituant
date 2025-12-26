@@ -25,7 +25,7 @@ ini_set('display_errors', 1);
 
 // TODO: Add your Mistral API key here
 // Get it from: https://console.mistral.ai/api-keys/
-const MISTRAL_API_KEY = 'PLo34vkCoWGgJrqneKWXSqzm2TjAMUWr';
+const MISTRAL_API_KEY = 'MISTRAL_API_KEY not configured. Get it from https://console.mistral.ai/api-keys/';
 
 // Mistral API endpoint
 const MISTRAL_API_URL = 'https://api.mistral.ai/v1/chat/completions';

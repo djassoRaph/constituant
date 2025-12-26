@@ -98,14 +98,20 @@ function renderBills(bills) {
 /**
  * Toggle bill details (expand/collapse)
  */
-function toggleBillDetails(billId) {
+function toggleBillDetails(billId, event) {
+    // Prevent default button behavior
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
     const details = document.getElementById(`details-${billId}`);
-    const btn = document.querySelector(`[onclick="toggleBillDetails('${billId}')"]`);
-    
+    const btn = event ? event.currentTarget : document.querySelector(`[onclick*="toggleBillDetails('${billId}')"]`);
+
     if (!details || !btn) return;
 
     const isExpanded = btn.getAttribute('aria-expanded') === 'true';
-    
+
     if (isExpanded) {
         // Collapse
         details.style.display = 'none';
@@ -159,7 +165,7 @@ function createBillCard(bill) {
         <article class="bill-card" data-bill-id="${bill.id}">
             <!-- Share Button -->
             <div class="share-btn-wrapper">
-                <button class="share-btn" onclick="openShareModal('${bill.id}')" aria-label="Partager cette loi">
+                <button type="button" class="share-btn" onclick="event.preventDefault(); event.stopPropagation(); openShareModal('${bill.id}', event);" aria-label="Partager cette loi">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="18" cy="5" r="3"></circle>
                         <circle cx="6" cy="12" r="3"></circle>
@@ -198,7 +204,7 @@ function createBillCard(bill) {
 
                 <!-- Expand Button -->
                 ${hasAiData ? `
-                    <button class="expand-btn" onclick="toggleBillDetails('${bill.id}')" aria-expanded="false" aria-controls="details-${bill.id}">
+                    <button type="button" class="expand-btn" onclick="event.preventDefault(); event.stopPropagation(); toggleBillDetails('${bill.id}', event);" aria-expanded="false" aria-controls="details-${bill.id}">
                         <span class="expand-text">▼ En savoir plus</span>
                         <span class="collapse-text" style="display:none;">▲ Réduire</span>
                     </button>
@@ -266,15 +272,15 @@ function createBillCard(bill) {
                 </div>
             ` : !isPast ? `
                 <div class="vote-actions">
-                    <button class="vote-btn for" onclick="initiateVote('${bill.id}', 'for')">
+                    <button type="button" class="vote-btn for" onclick="event.preventDefault(); event.stopPropagation(); initiateVote('${bill.id}', 'for', event);">
                         <span class="vote-btn-icon">👍</span>
                         <span>Pour</span>
                     </button>
-                    <button class="vote-btn against" onclick="initiateVote('${bill.id}', 'against')">
+                    <button type="button" class="vote-btn against" onclick="event.preventDefault(); event.stopPropagation(); initiateVote('${bill.id}', 'against', event);">
                         <span class="vote-btn-icon">👎</span>
                         <span>Contre</span>
                     </button>
-                    <button class="vote-btn abstain" onclick="initiateVote('${bill.id}', 'abstain')">
+                    <button type="button" class="vote-btn abstain" onclick="event.preventDefault(); event.stopPropagation(); initiateVote('${bill.id}', 'abstain', event);">
                         <span class="vote-btn-icon">🤷</span>
                         <span>Abs.</span>
                     </button>
@@ -323,7 +329,12 @@ function createBillCard(bill) {
 /**
  * Switch tab
  */
-function switchTab(tab) {
+function switchTab(tab, event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
     if (AppState.loading) return;
 
     AppState.currentTab = tab;

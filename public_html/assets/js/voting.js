@@ -14,8 +14,15 @@ const VoteState = {
  * Initiate a vote (shows confirmation modal)
  * @param {string} billId - Bill ID
  * @param {string} voteType - Vote type: 'for', 'against', or 'abstain'
+ * @param {Event} event - Optional event object to prevent default behavior
  */
-function initiateVote(billId, voteType) {
+function initiateVote(billId, voteType, event) {
+    // Prevent default button behavior and stop propagation
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
     // Find the bill in app state
     const bill = AppState.bills.find(b => b.id === billId);
 
@@ -65,7 +72,12 @@ function showVoteModal(billTitle, voteType) {
 /**
  * Close vote confirmation modal
  */
-function closeVoteModal() {
+function closeVoteModal(event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
     const modal = document.getElementById('vote-modal');
     if (modal) {
         modal.classList.add('hidden');
@@ -77,7 +89,12 @@ function closeVoteModal() {
 /**
  * Confirm and submit the vote
  */
-async function confirmVote() {
+async function confirmVote(event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
     if (!VoteState.pendingVote || VoteState.isSubmitting) return;
 
     const { billId, voteType } = VoteState.pendingVote;

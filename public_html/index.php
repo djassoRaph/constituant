@@ -68,17 +68,17 @@ require_once __DIR__ . '/../cron/lib/config/config.php';
             <!-- Error State -->
             <div id="error-state" class="error-state hidden">
                 <p class="error-message"></p>
-                <button onclick="loadBills()" class="btn-retry">Réessayer</button>
+                <button type="button" onclick="loadBills()" class="btn-retry">Réessayer</button>
             </div>
 
             <!-- Tabs -->
             <div id="tabs-container" class="tabs-container hidden">
-                <button class="tab active" data-tab="active" onclick="switchTab('active')">
+                <button type="button" class="tab active" data-tab="active" onclick="event.preventDefault(); event.stopPropagation(); switchTab('active', event);">
                     <span class="tab-icon">📋</span>
                     <span class="tab-label">En cours</span>
                     <span class="tab-badge" id="active-count">0</span>
                 </button>
-                <button class="tab" data-tab="past" onclick="switchTab('past')">
+                <button type="button" class="tab" data-tab="past" onclick="event.preventDefault(); event.stopPropagation(); switchTab('past', event);">
                     <span class="tab-icon">📜</span>
                     <span class="tab-label">Terminés</span>
                     <span class="tab-badge" id="past-count">0</span>
@@ -158,39 +158,39 @@ require_once __DIR__ . '/../cron/lib/config/config.php';
 
     <!-- Vote Modal -->
     <div id="vote-modal" class="modal hidden">
-        <div class="modal-overlay" onclick="closeVoteModal()"></div>
+        <div class="modal-overlay" onclick="event.preventDefault(); event.stopPropagation(); closeVoteModal(event);"></div>
         <div class="modal-content">
             <h3 id="modal-title">Confirmer votre vote</h3>
             <p id="modal-message"></p>
             <div class="modal-actions">
-                <button onclick="closeVoteModal()" class="btn-secondary">Annuler</button>
-                <button onclick="confirmVote()" class="btn-primary" id="confirm-btn">Confirmer</button>
+                <button type="button" onclick="event.preventDefault(); event.stopPropagation(); closeVoteModal(event);" class="btn-secondary">Annuler</button>
+                <button type="button" onclick="event.preventDefault(); event.stopPropagation(); confirmVote(event);" class="btn-primary" id="confirm-btn">Confirmer</button>
             </div>
         </div>
     </div>
 
     <!-- Share Modal -->
     <div id="share-modal" class="modal hidden">
-        <div class="modal-overlay" onclick="closeShareModal()"></div>
+        <div class="modal-overlay" onclick="event.preventDefault(); event.stopPropagation(); closeShareModal(event);"></div>
         <div class="modal-content share-modal-content">
-            <button class="modal-close" onclick="closeShareModal()">×</button>
+            <button type="button" class="modal-close" onclick="event.preventDefault(); event.stopPropagation(); closeShareModal(event);">×</button>
             <h3>Partager cette loi</h3>
             <p id="share-title" class="share-bill-title"></p>
-            
+
             <div class="share-buttons">
-                <button onclick="shareOnTwitter()" class="share-btn twitter">
+                <button type="button" onclick="event.preventDefault(); event.stopPropagation(); shareOnTwitter(event);" class="share-btn twitter">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                     </svg>
                     Twitter
                 </button>
-                <button onclick="shareOnFacebook()" class="share-btn facebook">
+                <button type="button" onclick="event.preventDefault(); event.stopPropagation(); shareOnFacebook(event);" class="share-btn facebook">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                     </svg>
                     Facebook
                 </button>
-                <button onclick="copyShareLink()" class="share-btn copy">
+                <button type="button" onclick="event.preventDefault(); event.stopPropagation(); copyShareLink(event);" class="share-btn copy">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -198,7 +198,7 @@ require_once __DIR__ . '/../cron/lib/config/config.php';
                     Copier le lien
                 </button>
             </div>
-            
+
             <input type="text" id="share-url" class="share-url" readonly>
         </div>
     </div>
