@@ -282,7 +282,7 @@ function createBillCard(bill) {
                     </button>
                     <button type="button" class="vote-btn abstain" onclick="event.preventDefault(); event.stopPropagation(); initiateVote('${bill.id}', 'abstain', event);">
                         <span class="vote-btn-icon">🤷</span>
-                        <span>Abs.</span>
+                        <span>Abstention</span>
                     </button>
                 </div>
             ` : ''}
@@ -464,11 +464,36 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 
+/**
+ * Toggle header visibility
+ */
+function toggleHeader() {
+    const header = document.getElementById('site-header');
+    const toggleBtn = document.getElementById('header-toggle');
+    const hideIcon = toggleBtn.querySelector('.toggle-icon-hide');
+    const showIcon = toggleBtn.querySelector('.toggle-icon-show');
+
+    if (header.classList.contains('collapsed')) {
+        // Expand header
+        header.classList.remove('collapsed');
+        hideIcon.style.display = '';
+        showIcon.style.display = 'none';
+        toggleBtn.setAttribute('aria-label', 'Masquer l\'en-tête');
+    } else {
+        // Collapse header
+        header.classList.add('collapsed');
+        hideIcon.style.display = 'none';
+        showIcon.style.display = '';
+        toggleBtn.setAttribute('aria-label', 'Afficher l\'en-tête');
+    }
+}
+
 // Make functions global
 window.initializeApp = initializeApp;
 window.switchTab = switchTab;
 window.loadBills = loadBills;
 window.toggleBillDetails = toggleBillDetails;
+window.toggleHeader = toggleHeader;
 window.getVoteLabel = getVoteLabel;
 window.escapeHtml = escapeHtml;
 window.showToast = showToast;

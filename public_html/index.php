@@ -40,18 +40,26 @@ require_once __DIR__ . '/../cron/lib/config/config.php';
 </head>
 <body>
     <!-- Header -->
-    <header class="site-header">
-        <div class="container">
-            <div class="logo">
-                <h1>
-                    <span class="logo-icon">🏛️</span>
-                    <span class="logo-text"><?php echo SITE_NAME; ?></span>
-                </h1>
-                <p class="tagline"><?php echo SITE_TAGLINE; ?></p>
+    <header class="site-header" id="site-header">
+        <button type="button" class="header-toggle" id="header-toggle" onclick="toggleHeader()" aria-label="Masquer/Afficher l'en-tête">
+            <span class="toggle-icon-hide">▲</span>
+            <span class="toggle-icon-show" style="display: none;">▼</span>
+        </button>
+        <div class="header-content" id="header-content">
+            <div class="container">
+                <div class="logo">
+                    <h1>
+                        <span class="logo-icon">🏛️</span>
+                        <span class="logo-text"><?php echo SITE_NAME; ?></span>
+                    </h1>
+                    <p class="tagline"><?php echo SITE_TAGLINE; ?></p>
+                    <p>Une plateforme citoyenne pour exprimer votre opinion sur les lois débattues à l'Assemblée nationale et plus tard au Parlement européen.</p>
+                    <p>⚠️En version alpha expérimentale. Utilisez-la sans risques et partagez vos retours !⚠️</p>
+                </div>
+                <nav class="header-nav">
+                    <a href="#about" class="nav-link">À propos</a>
+                </nav>
             </div>
-            <nav class="header-nav">
-                <a href="#about" class="nav-link">À propos</a>
-            </nav>
         </div>
     </header>
 
@@ -164,7 +172,7 @@ require_once __DIR__ . '/../cron/lib/config/config.php';
             <p id="modal-message"></p>
             <div class="modal-actions">
                 <button type="button" onclick="event.preventDefault(); event.stopPropagation(); closeVoteModal(event);" class="btn-secondary">Annuler</button>
-                <button type="button" onclick="event.preventDefault(); event.stopPropagation(); confirmVote(event);" class="btn-primary" id="confirm-btn">Confirmer</button>
+                <button type="button" onclick="event.preventDefault(); event.stopPropagation(); confirmVote(event);" class="btn-primary" id="confirm-vote-btn">Confirmer</button>
             </div>
         </div>
     </div>

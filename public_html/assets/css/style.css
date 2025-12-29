@@ -91,11 +91,59 @@ body {
 .site-header {
     background: white;
     border-bottom: 1px solid var(--grey-200);
-    padding: var(--space-4) var(--space-6);
     position: sticky;
     top: 0;
     z-index: 100;
     box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+}
+
+.site-header.collapsed {
+    padding: 0;
+}
+
+.header-content {
+    padding: var(--space-4) var(--space-6);
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+    max-height: 500px;
+    opacity: 1;
+}
+
+.site-header.collapsed .header-content {
+    max-height: 0;
+    opacity: 0;
+    padding: 0 var(--space-6);
+}
+
+.header-toggle {
+    position: absolute;
+    top: var(--space-2);
+    right: var(--space-4);
+    background: var(--blue-france);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--space-2) var(--space-4);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    z-index: 101;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.header-toggle:hover {
+    background: var(--blue-france-sun);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.header-toggle:active {
+    transform: scale(0.95);
 }
 
 .logo {

@@ -121,6 +121,13 @@ async function confirmVote(event) {
             })
         });
 
+        // Check if response is ok
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ error: 'Erreur serveur' }));
+            handleVoteError(errorData.error || `Erreur ${response.status}`);
+            return;
+        }
+
         const data = await response.json();
 
         if (data.success) {
