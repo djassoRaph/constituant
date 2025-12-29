@@ -5,6 +5,31 @@
  */
 
 require_once __DIR__ . '/../cron/lib/config/config.php';
+require_once __DIR__ . '/../cron/lib/config/database.php';
+
+// Check if a specific bill is being shared
+$billId = $_GET['bill'] ?? null;
+$billData = null;
+
+if ($billId) {
+    try {
+        $stmt = dbQuery("SELECT id, title, summary, ai_summary FROM bills WHERE id = ?", [$billId]);
+        $billData = $stmt->fetch();
+    } catch (Exception $e) {
+        error_log('Error fetching bill for OG tags: ' . $e->getMessage());
+    }
+}
+
+// Set meta tag values
+if ($billData) {
+    $pageTitle = htmlspecialchars($billData['title'], ENT_QUOTES, 'UTF-8');
+    $pageDescription = htmlspecialchars($billData['ai_summary'] ?: $billData['summary'], ENT_QUOTES, 'UTF-8');
+    $pageUrl = SITE_URL . '/?bill=' . urlencode($billData['id']);
+} else {
+    $pageTitle = SITE_NAME . ' - ' . SITE_TAGLINE;
+    $pageDescription = 'Exprimez votre opinion sur les lois en cours de débat';
+    $pageUrl = SITE_URL;
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -13,18 +38,18 @@ require_once __DIR__ . '/../cron/lib/config/config.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Constituant - Votez sur les lois débattues à l'Assemblée nationale et au Parlement européen">
     <meta name="keywords" content="démocratie, vote, législation, assemblée nationale, parlement européen">
-    
+
     <!-- Open Graph / Twitter Card -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Constituant">
-    <meta property="og:title" content="<?php echo SITE_NAME; ?> - <?php echo SITE_TAGLINE; ?>">
-    <meta property="og:description" content="Exprimez votre opinion sur les lois en cours de débat">
-    <meta property="og:url" content="<?php echo SITE_URL; ?>">
+    <meta property="og:title" content="<?php echo $pageTitle; ?>">
+    <meta property="og:description" content="<?php echo $pageDescription; ?>">
+    <meta property="og:url" content="<?php echo $pageUrl; ?>">
     <meta property="og:image" content="<?php echo SITE_URL; ?>/assets/images/og-image.png">
-    
+
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="<?php echo SITE_NAME; ?>">
-    <meta name="twitter:description" content="Votre voix fait la loi">
+    <meta name="twitter:title" content="<?php echo $pageTitle; ?>">
+    <meta name="twitter:description" content="<?php echo $pageDescription; ?>">
     <meta name="twitter:image" content="<?php echo SITE_URL; ?>/assets/images/og-image.png">
 
     <title><?php echo SITE_NAME; ?> - <?php echo SITE_TAGLINE; ?></title>
