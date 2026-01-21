@@ -79,7 +79,7 @@ if ($billData) {
                     </h1>
                     <p class="tagline"><?php echo SITE_TAGLINE; ?></p>
                     <p>Une plateforme citoyenne pour exprimer votre opinion sur les lois débattues à l'Assemblée nationale et plus tard au Parlement européen.</p>
-                    <p>⚠️En version alpha expérimentale. Utilisez-la sans risques et partagez vos retours !⚠️</p>
+                    <p>⚠️En version alpha expérimentale. Utilisez-la sans risques et partagez vos retours !⚠️ o2switch</p>
                 </div>
                 <nav class="header-nav">
                     <a href="#about" class="nav-link">À propos</a>
