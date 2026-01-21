@@ -1,0 +1,32 @@
+---
+# Constituant.fr - cPanel Deployment Configuration
+# This file automates deployment from GitHub to o2switch hosting
+
+deployment:
+  tasks:
+    # Step 1: Copy all files from repository to public_html
+    - export DEPLOYPATH=/home/rera8347/constituant.fr/
+    
+    # Step 2: Sync public_html folder content to web root
+    - /bin/cp -R public_html/* $DEPLOYPATH
+    
+    # Step 3: Copy database schema (for reference, don't auto-import)
+    #- /bin/mkdir -p $DEPLOYPATH/database_backup
+    #- /bin/cp -R database/* $DEPLOYPATH/database_backup/
+    
+    # Step 4: Set correct permissions for web files
+    - /bin/chmod 755 $DEPLOYPATH
+    - /bin/find $DEPLOYPATH -type f -exec chmod 644 {} \;
+    - /bin/find $DEPLOYPATH -type d -exec chmod 755 {} \;
+    
+    # Step 5: Protect config directory (should be done by .htaccess but just in case)
+    - /bin/chmod 750 $DEPLOYPATH/config/
+    
+    # Step 6: Ensure .htaccess is in place
+    - /bin/chmod 644 $DEPLOYPATH/.htaccess
+    
+    # Step 7: Clear any PHP cache (opcache)
+    - /usr/local/bin/php -r "if(function_exists('opcache_reset')) opcache_reset();"
+
+# Note: Database credentials and config files are NOT overwritten
+# You must manually edit config/database.php and config/config.php on the server
