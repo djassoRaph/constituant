@@ -492,42 +492,26 @@ function logMessage(string $message, string $level = 'INFO'): void
 /**
  * Get source configuration
  *
+ * Reads from BILL_SOURCES constant defined in sources.php.
+ *
  * @param string $source Source name
  * @return array|null Source config or null if not found
  */
 function getSourceConfig(string $source): ?array
 {
-    $sources = [
-        'nosdeputes' => [
-            'name' => 'NosDéputés.fr',
-            'enabled' => true,
-            'priority' => 1,
-            'base_url' => 'https://www.nosdeputes.fr',
-            'endpoints' => [
-                'dossiers' => '/dossiers/date/json',
-            ],
-        ],
-        'lafabrique' => [
-            'name' => 'La Fabrique de la Loi',
-            'enabled' => true,
-            'priority' => 2,
-            'base_url' => 'https://www.lafabriquedelaloi.fr',
-            'endpoints' => [
-                'dossiers' => '/api/dossiers.csv',
-            ],
-        ],
-        'eu-parliament' => [
-            'name' => 'European Parliament',
-            'enabled' => false, // Disabled due to 406 errors
-            'priority' => 3,
-            'base_url' => 'https://data.europarl.europa.eu',
-            'endpoints' => [
-                'documents' => '/api/v2/documents',
-            ],
-        ],
-    ];
-    
-    return $sources[$source] ?? null;
+    // Load from sources.php if BILL_SOURCES is defined (preferred)
+    if (defined('BILL_SOURCES')) {
+        return BILL_SOURCES[$source] ?? null;
+    }
+
+    // Fallback: load sources.php
+    $sourcesFile = __DIR__ . '/config/sources.php';
+    if (file_exists($sourcesFile)) {
+        require_once $sourcesFile;
+        return BILL_SOURCES[$source] ?? null;
+    }
+
+    return null;
 }
 
 /**
@@ -537,17 +521,24 @@ function getSourceConfig(string $source): ?array
  */
 function getEnabledSources(): array
 {
-    $sources = [
-        'nosdeputes' => getSourceConfig('nosdeputes'),
-        'lafabrique' => getSourceConfig('lafabrique'),
-        'eu-parliament' => getSourceConfig('eu-parliament'),
-    ];
-    
+    // Load from sources.php if not already loaded
+    if (!defined('BILL_SOURCES')) {
+        $sourcesFile = __DIR__ . '/config/sources.php';
+        if (file_exists($sourcesFile)) {
+            require_once $sourcesFile;
+        }
+    }
+
+    if (!defined('BILL_SOURCES')) {
+        logMessage("BILL_SOURCES not defined - no sources.php found", 'ERROR');
+        return [];
+    }
+
     // Filter enabled only
-    $enabled = array_filter($sources, fn($s) => $s['enabled']);
-    
+    $enabled = array_filter(BILL_SOURCES, fn($s) => $s['enabled']);
+
     // Sort by priority
     uasort($enabled, fn($a, $b) => $a['priority'] <=> $b['priority']);
-    
+
     return $enabled;
 }

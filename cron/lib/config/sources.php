@@ -16,29 +16,53 @@ if (!defined('CONSTITUANT_APP')) {
 
 // Data source configurations
 const BILL_SOURCES = [
+    // =========================================================================
+    // PRIMARY SOURCE: Légifrance (DILA/PISTE) - Official French government API
+    // Replaced NosDéputés, La Fabrique, and EU Parliament in February 2026
+    // =========================================================================
+    'legifrance' => [
+        'name' => 'Légifrance (DILA/PISTE)',
+        'enabled' => true,
+        'priority' => 1,
+        'level' => 'france',
+        'token_cache_file' => __DIR__ . '/../../cache/legifrance_token.json',
+        'rate_limit' => [
+            'requests_per_minute' => 30,
+            'delay_seconds' => 1,
+        ],
+        'timeout' => 30,
+        'max_bills_per_run' => 50,
+        'search_days_back' => 90,  // Search for laws published in last 90 days
+        'attribution' => 'Source: Légifrance (DILA) - Licence Ouverte 2.0',
+    ],
+
+    // =========================================================================
+    // DEPRECATED SOURCES - Replaced by Légifrance API (February 2026)
+    // Kept for reference, do not re-enable
+    // =========================================================================
     'nosdeputes' => [
         'name' => 'NosDéputés.fr',
-        'enabled' => true,
-        'priority' => 1, // Higher priority = fetch first
+        'enabled' => false, // DEPRECATED: Replaced by Légifrance API (2026)
+        'priority' => 10,
         'level' => 'france',
         'base_url' => 'https://www.nosdeputes.fr',
         'endpoints' => [
             'dossiers' => '/dossiers/date/json',
-            'scrutins' => '/16/scrutins/json', // 16 = current legislature (2022-2027)
+            'scrutins' => '/16/scrutins/json',
             'search' => '/recherche/projets?format=json',
         ],
         'rate_limit' => [
             'requests_per_minute' => 30,
-            'delay_seconds' => 2, // Delay between requests
+            'delay_seconds' => 2,
         ],
-        'timeout' => 30, // HTTP timeout in seconds
+        'timeout' => 30,
         'attribution' => 'Données issues de NosDéputés.fr (Licence ODbL)',
     ],
 
     'lafabrique' => [
         'name' => 'La Fabrique de la Loi',
-        'enabled' => true,
-        'priority' => 2,
+        'enabled' => false, // DEPRECATED: Replaced by Légifrance API (2026)
+        'priority' => 11,
         'level' => 'france',
         'base_url' => 'https://www.lafabriquedelaloi.fr',
         'endpoints' => [
@@ -54,8 +78,8 @@ const BILL_SOURCES = [
 
     'eu-parliament' => [
         'name' => 'European Parliament - Legislative Observatory',
-        'enabled' => false, // Temporarily disabled - API returns low-level documents (amendments)
-        'priority' => 3,
+        'enabled' => false, // DEPRECATED: API broken (406 errors)
+        'priority' => 12,
         'level' => 'eu',
         'base_url' => 'https://data.europarl.europa.eu',
         'endpoints' => [
@@ -72,8 +96,8 @@ const BILL_SOURCES = [
 
     'epdb' => [
         'name' => 'European Parliament Database (EPDB)',
-        'enabled' => false, // Start disabled, enable after testing
-        'priority' => 4,
+        'enabled' => false, // DEPRECATED
+        'priority' => 13,
         'level' => 'eu',
         'base_url' => 'http://api.epdb.eu',
         'endpoints' => [

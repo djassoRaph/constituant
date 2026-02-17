@@ -29,8 +29,13 @@ $scriptStartTime = microtime(true);
 require_once __DIR__ . '/lib/fetcher-base.php';
 
 // Load source fetchers
-require_once __DIR__ . '/sources/nosdeputes.php';
-require_once __DIR__ . '/sources/lafabrique.php';
+// PRIMARY: Légifrance (DILA/PISTE) - Official French government API
+require_once __DIR__ . '/sources/legifrance.php';
+
+// DEPRECATED: Replaced by Légifrance API (PISTE/DILA) - February 2026
+// require_once __DIR__ . '/sources/nosdeputes.php';
+// require_once __DIR__ . '/sources/lafabrique.php';
+// require_once __DIR__ . '/sources/eu-parliament.php';
 
 // Output header
 echo str_repeat('=', 80) . PHP_EOL;
@@ -157,15 +162,17 @@ try {
 function callSourceFetcher(string $sourceKey): array
 {
     switch ($sourceKey) {
-        case 'nosdeputes':
-            return fetchNosDePutes();
-            
-        case 'lafabrique':
-            return fetchLaFabrique();
-            
-        case 'eu-parliament':
-            return fetchEUParliament();
-            
+        case 'legifrance':
+            return fetchLegifrance();
+
+        // DEPRECATED: Replaced by Légifrance API (February 2026)
+        // case 'nosdeputes':
+        //     return fetchNosDePutes();
+        // case 'lafabrique':
+        //     return fetchLaFabrique();
+        // case 'eu-parliament':
+        //     return fetchEUParliament();
+
         default:
             logMessage("Unknown source: $sourceKey", 'WARNING');
             return [

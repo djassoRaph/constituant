@@ -1,0 +1,8 @@
+# Cache directory - never commit cached data
+# Token files, API responses, etc.
+*.json
+*.cache
+*.tmp
+
+# But keep this .gitignore
+!.gitignore
