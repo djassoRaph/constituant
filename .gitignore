@@ -103,6 +103,10 @@ cache/
 *.cache
 .cache/
 
+# DILA CSV cache files (keep directory structure)
+cron/cache/dila/*.csv
+!cron/cache/dila/.gitkeep
+
 # ============================================================================
 # Testing
 # ============================================================================
@@ -158,3 +162,10 @@ Thumbs.db
 !public_html/config/api-keys.example.php
 !.gitkeep
 .claude/settings.local.json
+
+temp data/
+K7Ub.docx
+Skill.md
+Claude.md
+.claude/
+documentation/
