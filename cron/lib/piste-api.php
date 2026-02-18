@@ -33,7 +33,12 @@ function getPisteAccessToken(): string
         ? 'https://sandbox-oauth.piste.gouv.fr/api/oauth/token'
         : 'https://oauth.piste.gouv.fr/api/oauth/token';
 
-    logMessage("PISTE: Requesting token from $tokenUrl");
+    // Debug: show which credentials and endpoint are in use
+    $clientIdPreview = defined('PISTE_CLIENT_ID') ? substr(PISTE_CLIENT_ID, 0, 8) . '...' : 'NOT DEFINED';
+    $sandboxMode     = (defined('PISTE_SANDBOX') && PISTE_SANDBOX) ? 'SANDBOX' : 'PRODUCTION';
+    echo "  [DEBUG] PISTE mode: $sandboxMode | client_id: $clientIdPreview | endpoint: $tokenUrl\n";
+
+    logMessage("PISTE: Requesting token from $tokenUrl (mode=$sandboxMode, client=$clientIdPreview)");
 
     $result = fetchUrl($tokenUrl, [
         CURLOPT_POST       => true,
@@ -48,7 +53,8 @@ function getPisteAccessToken(): string
     ]);
 
     if (!$result['success']) {
-        throw new RuntimeException("PISTE OAuth request failed: " . $result['error']);
+        $detail = !empty($result['data']) ? ' — ' . substr($result['data'], 0, 500) : '';
+        throw new RuntimeException("PISTE OAuth request failed: " . $result['error'] . $detail);
     }
 
     $payload = json_decode($result['data'], true);
