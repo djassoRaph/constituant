@@ -8,10 +8,10 @@ RewriteEngine On
 RewriteBase /
 
 # ============================================================================
-# Force HTTPS (uncomment for production)
+# Force HTTPS
 # ============================================================================
-# RewriteCond %{HTTPS} off
-# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 # ============================================================================
 # Security Headers
@@ -33,8 +33,8 @@ RewriteBase /
     Header unset Server
     Header unset X-Powered-By
 
-    # Content Security Policy (adjust as needed)
-    # Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'"
+    # Content Security Policy
+    Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'"
 
     # Permissions Policy (formerly Feature-Policy)
     Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
@@ -180,8 +180,7 @@ RewriteBase /
 # ============================================================================
 # PHP Configuration
 # ============================================================================
-<IfModule mod_php7.c>
-    # Disable directory listing
+<IfModule mod_php8.c>
     php_flag display_errors Off
     php_value upload_max_filesize 10M
     php_value post_max_size 10M

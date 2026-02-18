@@ -53,11 +53,12 @@ ob_start();
 // Set error handler to return JSON
 set_error_handler(function($errno, $errstr, $errfile, $errline) {
     ob_clean();
+    error_log("PHP Error [$errno]: $errstr in $errfile on line $errline");
     http_response_code(500);
     header('Content-Type: application/json');
     echo json_encode([
         'success' => false,
-        'error' => "PHP Error: $errstr in $errfile on line $errline"
+        'error' => 'An internal error occurred'
     ]);
     exit;
 });
@@ -65,13 +66,12 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 // Set exception handler to return JSON
 set_exception_handler(function($exception) {
     ob_clean();
+    error_log('Unhandled exception in get-votes.php: ' . $exception->getMessage() . ' in ' . $exception->getFile() . ':' . $exception->getLine());
     http_response_code(500);
     header('Content-Type: application/json');
     echo json_encode([
         'success' => false,
-        'error' => $exception->getMessage(),
-        'file' => $exception->getFile(),
-        'line' => $exception->getLine()
+        'error' => 'An internal error occurred'
     ]);
     exit;
 });

@@ -170,9 +170,9 @@ function handleVoteSuccess(billId, voteType, data) {
     // Update bill card
     updateBillCardAfterVote(billId, voteType);
 
-    // Refresh results from server
+    // Refresh results from server (silent — don't collapse page height and cause scroll jump)
     setTimeout(() => {
-        loadBills();
+        loadBills(true);
     }, 500);
 
     // Store vote in localStorage (for persistence across page loads)

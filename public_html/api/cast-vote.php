@@ -41,8 +41,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 try {
-    // Get JSON input
-    $input = file_get_contents('php://input');
+    // Reject oversized request bodies early (max 2 KB is more than enough)
+    $input = file_get_contents('php://input', false, null, 0, 2048);
+    if (strlen($input) >= 2048) {
+        sendErrorResponse('Request body too large', 413);
+    }
+
     $data = json_decode($input, true);
 
     if (json_last_error() !== JSON_ERROR_NONE) {
@@ -60,6 +64,14 @@ try {
 
     $billId = trim($data['bill_id']);
     $voteType = trim($data['vote_type']);
+
+    // Validate input lengths to prevent oversized payloads
+    if (strlen($billId) > 200) {
+        sendErrorResponse('bill_id invalide');
+    }
+    if (strlen($voteType) > 10) {
+        sendErrorResponse('vote_type invalide');
+    }
 
     // Validate vote type
     $validVoteTypes = ['for', 'against', 'abstain'];

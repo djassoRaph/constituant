@@ -9,7 +9,7 @@
 
 ## What is Constituant?
 
-Constituant enables French and EU citizens to vote anonymously on real legislation from the European Parliament and French National Assembly. The platform displays aggregate results in real-time, providing transparency by comparing citizen votes with actual parliamentary outcomes.
+Constituant enables French and EU citizens to vote anonymously on real legislation from the European Parliament and the French National Assembly. The platform displays aggregate results in real-time, providing transparency by comparing citizen votes with actual parliamentary outcomes.
 
 **The name**: In French, "constituant" means both "constituent" (a voter) and "constitution-maker" — reflecting the project's mission to transform citizens from passive observers to active participants in governance.
 
@@ -17,7 +17,7 @@ Constituant enables French and EU citizens to vote anonymously on real legislati
 
 Inspired by Étienne Chouard's work on direct democracy and sortition:
 - **Transparency**: See what your representatives are voting on
-- **Accountability**: Compare their votes with citizen preferences  
+- **Accountability**: Compare their votes with citizen preferences
 - **Practice**: Train citizens in legislative deliberation
 - **Evolution**: Path toward sortition-based governance
 
@@ -25,26 +25,26 @@ Inspired by Étienne Chouard's work on direct democracy and sortition:
 
 ## Features
 
-✅ **Automated Bill Import** - Fetches legislation from NosDéputés.fr, EU Parliament, La Fabrique de la Loi  
-✅ **AI Classification** - Mistral AI categorizes bills into themes and creates citizen-friendly summaries  
-✅ **Anonymous Voting** - Vote For/Against/Abstain on real legislation  
-✅ **Real-time Results** - See how other citizens voted, compare with representatives  
-✅ **Theme Filtering** - Browse by category: Economy, Health, Environment, Justice, etc.  
-✅ **Mobile-First** - Responsive design optimized for all devices  
+✅ **Automated Bill Import** - Fetches legislation from Légifrance (PISTE API) and EU Parliament
+✅ **AI Classification** - Mistral AI categorizes bills into themes and creates citizen-friendly summaries
+✅ **Anonymous Voting** - Vote For/Against/Abstain on real legislation
+✅ **Real-time Results** - See how other citizens voted, compare with representatives
+✅ **Theme Filtering** - Browse by category: Economy, Health, Environment, Justice, etc.
+✅ **Mobile-First** - Responsive design optimized for all devices
 
 ## Tech Stack
 
-- **Backend**: PHP 8.x + MySQL
-- **AI**: Mistral AI (free tier) for classification & summarization
-- **Hosting**: o2switch shared hosting
-- **Frontend**: Vanilla HTML/CSS/JavaScript (progressive enhancement)
-- **Automation**: Cron jobs for bill fetching & classification
+- **Backend**: PHP 8.x + MySQL 8.0+
+- **AI**: Mistral AI (`mistral-small-latest`) for classification & summarization
+- **Hosting**: o2switch shared hosting (Apache)
+- **Frontend**: Vanilla HTML/CSS/JavaScript (no frameworks)
+- **Automation**: Cron jobs every 6 hours for bill fetching & classification
 
-**Why Traditional Stack?**  
-We deliberately chose PHP/MySQL over blockchain/modern frameworks for:
+**Why Traditional Stack?**
+We deliberately chose PHP/MySQL over modern frameworks for:
 - Simplicity (no technical barriers for contributors)
 - Privacy (GDPR compliant, no immutable records)
-- Cost (zero AI costs with free tier)
+- Cost (minimal AI costs with free tier)
 - Deployment (optimized for affordable shared hosting)
 
 ## Quick Start
@@ -52,8 +52,9 @@ We deliberately chose PHP/MySQL over blockchain/modern frameworks for:
 ### Requirements
 - PHP 8.0+
 - MySQL 8.0+
-- Web server (Apache/Nginx)
-- Mistral API key (free tier: https://console.mistral.ai)
+- Web server (Apache with mod_rewrite)
+- Mistral API key — [console.mistral.ai](https://console.mistral.ai)
+- PISTE API credentials — [piste.gouv.fr](https://piste.gouv.fr) (for Légifrance)
 
 ### Installation
 
@@ -63,141 +64,180 @@ git clone https://github.com/djassoRaph/constituant.git
 cd constituant
 ```
 
-2. **Configure database**
+2. **Configure the application**
 ```bash
-# Import schema
+# Copy example configs (never commit the real ones)
+cp cron/lib/config/database.example.php cron/lib/config/database.php
+cp cron/lib/config/config.example.php   cron/lib/config/config.php
+cp cron/lib/config/api-keys.example.php cron/lib/config/api-keys.php
+
+# Edit each file with your credentials
+nano cron/lib/config/database.php   # DB_HOST, DB_NAME, DB_USER, DB_PASS
+nano cron/lib/config/api-keys.php   # MISTRAL_API_KEY, PISTE_CLIENT_ID, PISTE_CLIENT_SECRET
+```
+
+3. **Set up the database**
+```bash
 mysql -u root -p < database/schema.sql
-
-# Edit config
-nano config/database.php
-# Set: DB_HOST, DB_NAME, DB_USER, DB_PASS
 ```
 
-3. **Configure Mistral AI**
+4. **Run initial import**
 ```bash
-nano config/sources.php
-# Set: MISTRAL_API_KEY (get free key from console.mistral.ai)
-```
-
-4. **Test the system**
-```bash
-php cron/test-import.php
-```
-
-5. **Run initial import**
-```bash
+# Fetches ~140 bills from Légifrance + EU Parliament, takes ~6 min (AI processing)
 php cron/fetch-bills.php
 ```
 
-6. **Set up cron jobs**
+5. **Set up cron jobs** (via cPanel or crontab)
 ```cron
 # Fetch bills every 6 hours
 0 */6 * * * /usr/bin/php /path/to/cron/fetch-bills.php >> /path/to/logs/cron.log 2>&1
 ```
 
-7. **Access the platform**
+6. **Access the platform**
 - Frontend: `http://localhost/`
-- Admin: `http://localhost/admin/` (default: admin/changeme)
 
-**⚠️ SECURITY**: Change the default admin password immediately!
+**⚠️ SECURITY**: Change `ADMIN_PASSWORD` in `config.php` immediately after setup!
 
 ## Project Structure
 
 ```
 constituant/
-├── public/              # Frontend (entry point)
-│   ├── index.php       # Main voting interface
-│   ├── css/           # Styles
-│   └── js/            # Client-side scripts
-├── admin/              # Admin panel
-│   ├── index.php      # Dashboard
-│   └── pending-bills/ # Bill management
-├── api/                # REST endpoints
-│   ├── get-votes.php
-│   ├── cast-vote.php
-│   └── get-results.php
-├── cron/               # Automation scripts
-│   ├── fetch-bills.php        # Main orchestrator
-│   ├── reclassify-bills.php   # Mistral AI classifier
-│   ├── lib/fetcher-base.php   # Shared functions
-│   └── sources/               # API fetchers
-├── config/             # Configuration
-│   ├── database.php   # DB credentials
-│   └── sources.php    # API keys + Mistral config
-├── database/           # Database files
-│   ├── schema.sql     # Full schema
-│   └── migrations/    # Version history
-└── logs/              # Application logs
+├── public_html/             # Web root (served by Apache)
+│   ├── index.php           # Main voting interface
+│   ├── .htaccess           # Apache config: security headers, HTTPS, caching
+│   └── api/                # Public API endpoints
+│       ├── cast-vote.php   # POST: submit a vote
+│       ├── get-votes.php   # GET:  list bills with vote stats
+│       ├── get-results.php # GET:  vote stats for a specific bill
+│       └── add-bill.php    # POST: add bill (admin/automated)
+├── cron/                    # Automation & bill processing
+│   ├── fetch-bills.php     # Main orchestrator (runs every 6h)
+│   ├── reclassify-bills.php# Re-run AI classification on existing bills
+│   ├── lib/
+│   │   ├── fetcher-base.php     # Shared utilities & logging
+│   │   ├── mistral_ai.php       # Mistral AI integration
+│   │   ├── piste-api.php        # PISTE OAuth2 + Légifrance API wrapper
+│   │   └── config/              # All configuration lives here (gitignored)
+│   │       ├── database.php     # DB credentials
+│   │       ├── api-keys.php     # Mistral + PISTE API keys
+│   │       ├── config.php       # App settings, rate limits, session config
+│   │       └── sources.php      # Data source toggles
+│   ├── sources/             # Per-source bill fetchers
+│   │   ├── legifrance.php  # Légifrance via PISTE (PRIMARY — France)
+│   │   ├── eu-parliament.php    # EU Parliament (PRIMARY — EU)
+│   │   ├── nosdeputes.php  # Legacy (replaced by Légifrance)
+│   │   └── lafabrique.php  # Legacy
+│   └── test/               # Manual test scripts
+├── database/
+│   └── schema.sql          # Full schema: tables, triggers, events, procedure
+├── logs/                   # Application logs (gitignored)
+└── Documentation/          # Project documentation
 ```
 
 ## Architecture
 
 ### Automated Workflow
 ```
-1. Cron triggers fetch-bills.php (every 6 hours)
-2. Fetchers pull from NosDéputés, EU Parliament, La Fabrique
-3. Bills saved to database
-4. Mistral AI classifies (theme + citizen summary)
-5. Published automatically (no manual approval)
-6. Citizens vote via frontend
-7. Results aggregated in real-time
+External APIs (Légifrance/PISTE, EU Parliament)
+    ↓
+cron/fetch-bills.php  (every 6 hours)
+    ↓
+Mistral AI classification (theme + citizen summary)
+    ↓
+MySQL (bills table)
+    ↓
+REST API (public_html/api/)
+    ↓
+Frontend → Citizen votes in real time
 ```
 
 ### Database Schema (Simplified)
 ```sql
 -- Bills with AI classification
 bills (
-    id, title, summary, full_text_url,
-    level, chamber, theme,
-    ai_summary, ai_processed_at,  -- Mistral outputs
-    vote_datetime, status,
-    yes_count, no_count, abstain_count  -- Auto-updated
+    id VARCHAR(100) PRIMARY KEY,  -- e.g. "legifrance-JORFDOLE000050646591-2024"
+    title, summary, ai_summary,
+    theme, ai_confidence,
+    level ENUM('france','eu'), chamber,
+    vote_datetime, status ENUM('upcoming','voting_now','completed'),
+    votes_for, votes_against, votes_abstain, votes_total  -- auto-updated by triggers
 )
 
--- Anonymous votes (IP-based for MVP)
+-- Anonymous votes (IP-based)
 votes (
-    bill_id, vote_type, voter_ip, voted_at
-    -- UNIQUE(bill_id, voter_ip) prevents double voting
+    bill_id, vote_type ENUM('for','against','abstain'),
+    voter_ip,  -- hashed for GDPR in future
+    voted_at
+    -- UNIQUE(bill_id, voter_ip): one vote per bill per IP, changes allowed
 )
 ```
 
+### Status Transitions
+MySQL event `auto_update_bill_statuses` runs hourly and calls stored procedure `update_bill_statuses()` to transition: `upcoming → voting_now → completed` based on `vote_datetime`.
+
+## Data Sources
+
+| Source | Status | Coverage |
+|--------|--------|----------|
+| **Légifrance (PISTE API)** | ✅ Primary | French parliament bills (legislature 17) |
+| **EU Parliament API** | ✅ Active | European Parliament legislation |
+| NosDéputés.fr | ⚠️ Legacy | Replaced by Légifrance |
+| La Fabrique de la Loi | ⚠️ Legacy | French legislative history |
+| DILA CSV | ❌ Disabled | Unreliable column format |
+
 ## AI Classification
 
-**Mistral AI Integration** (FREE tier):
-- Categorizes bills into 15 themes (Economy, Health, Environment, etc.)
-- Generates plain-language summaries (2-3 sentences)
-- Confidence scores typically ~95%
-- Zero cost with free tier
+**Model**: `mistral-small-latest`
+**Input**: Bill title + description
+**Output**: theme, 20-word abstract, 2–3 sentence summary, pro/con arguments, affected groups
+**Confidence**: ~95% typical
 
-**Themes**:
-Affaires sociales, Économie, Environnement & Énergie, Justice, Numérique, Santé, Éducation, Défense, Culture, Agriculture, Transports, Logement, Institutions, International, Libertés publiques
+**Themes**: Affaires sociales, Économie, Environnement & Énergie, Justice, Numérique, Santé, Éducation, Défense, Culture, Agriculture, Transports, Logement, Institutions, International, Libertés publiques
+
+## API Reference
+
+### `GET /api/get-votes.php`
+Returns bills with voting statistics and the current user's vote.
+
+| Param | Type | Default | Description |
+|-------|------|---------|-------------|
+| `level` | string | `all` | Filter: `france`, `eu`, `all` |
+| `status` | string | — | Filter: `upcoming`, `voting_now`, `completed` |
+
+### `POST /api/cast-vote.php`
+Submit or change a vote. Body: `{"bill_id": "...", "vote_type": "for|against|abstain"}`
+Rate limit: 10 votes/hour per IP. One vote per bill per IP (changes allowed).
+
+### `GET /api/get-results.php`
+Vote statistics for a specific bill. Param: `bill_id` (required).
 
 ## Contributing
 
 Contributions welcome! This is a civic project built by citizens, for citizens.
 
 **Before contributing**:
-1. Read the philosophy (see PHILOSOPHY.md)
+1. Read the philosophy (see `PHILOSOPHY.md`)
 2. Check existing issues/PRs
 3. Discuss major changes first
 
 **Development principles**:
-- Build on existing work, never recreate from scratch
-- Backend functionality before frontend polish
-- Test thoroughly (we're dealing with democratic data)
-- Document your changes
+- Use PDO prepared statements for all SQL — never concatenate user input
+- Sanitize all output with `htmlspecialchars()`
+- Follow existing patterns and keep changes focused
+- Test locally before pushing
+- Config files are gitignored — never commit real credentials
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
 ## Roadmap
 
-### Phase 1: Transparency (CURRENT - MVP)
-✅ Legislative digests  
-✅ Simple voting interface  
-✅ Real-time results  
-✅ AI-powered summaries  
+### Phase 1: Transparency (CURRENT)
+✅ Automated bill import (Légifrance + EU Parliament)
+✅ AI-powered citizen summaries
+✅ Anonymous voting interface
+✅ Real-time results
 
-### Phase 2: Accountability (Years 2-3)
+### Phase 2: Accountability (Years 2–3)
 - Representative scorecards (alignment tracking)
 - Petition thresholds (trigger responses)
 - Citizen amendment proposals
@@ -211,40 +251,31 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
 ## License
 
-**AGPL-3.0** - This project must remain open source forever. Any modifications must be shared publicly.
+**AGPL-3.0** — This project must remain open source forever. Any modifications must be shared publicly.
 
-Why AGPL? To prevent:
-- Corporate acquisition/privatization
-- Closed-source forks
-- Weaponization by bad actors
-
+Why AGPL? To prevent corporate acquisition, closed-source forks, or weaponization by bad actors.
 The code is a public good, owned by citizens, for citizens.
 
 ## Legal Structure
 
 **Planned**: Association loi 1901 (French non-profit)
 
-**Two-tier membership**:
-- **Basic**: Anonymous viewing + indicative voting (open to all)
-- **Full**: Identity-verified members with weighted voting rights (association members)
-
 ## Support
 
 - **Issues**: [GitHub Issues](https://github.com/djassoRaph/constituant/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/djassoRaph/constituant/discussions)
-- **Email**: contact@constituant.fr (coming soon)
+- **Email**: contact@constituant.fr
 
 ## Acknowledgments
 
-- **Étienne Chouard** - Philosophical foundation on sortition and direct democracy
-- **NosDéputés.fr** - French legislative data
-- **European Parliament** - EU legislative data
-- **La Fabrique de la Loi** - Legislative history
-- **Mistral AI** - Free tier for bill classification
+- **Étienne Chouard** — Philosophical foundation on sortition and direct democracy
+- **Légifrance / DILA / PISTE** — Official French legislative data
+- **European Parliament** — EU legislative data
+- **Mistral AI** — Bill classification and summarization
 
 ---
 
-**"We are all constituants"** - capable of governance when given proper information and deliberation space.
+**"We are all constituants"** — capable of governance when given proper information and deliberation space.
 
-*Project initiated: December 2024*  
+*Project initiated: December 2024*
 *Current status: Production deployment with full automation*
