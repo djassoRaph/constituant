@@ -1,9 +1,9 @@
 <?php
 /**
- * API Keys Configuration
+ * API Keys Configuration (Example)
  *
- * IMPORTANT: This file contains sensitive API keys and should NOT be committed to version control
- * Make sure api-keys.php is in .gitignore
+ * IMPORTANT: Copy this file to api-keys.php and add your real API keys
+ * DO NOT commit api-keys.php to version control!
  *
  * @package Constituant
  */
@@ -15,10 +15,13 @@ if (!defined('CONSTITUANT_APP')) {
 }
 
 // Mistral AI Configuration
-define('MISTRAL_API_KEY', '');
+define('MISTRAL_API_KEY', 'GOiylxokRtGnlBvwVKX0e0fDYKxBkSIN');
 define('MISTRAL_API_ENDPOINT', 'https://api.mistral.ai/v1/chat/completions');
 define('MISTRAL_MODEL', 'mistral-small-latest');
 define('MISTRAL_TIMEOUT', 30);
 
-// Add other API keys here as needed
-// define('OTHER_API_KEY', 'your-other-api-key-here');
+// PISTE / Légifrance API (https://piste.gouv.fr)
+// OAuth2 client credentials for the Légifrance REST API
+define('PISTE_CLIENT_ID',     '6b6665e4-bd3f-4e77-ace4-4db610d49110');
+define('PISTE_CLIENT_SECRET', 'bfe9bdd0-e7b4-421f-9f2c-f129b87a1170');
+define('PISTE_SANDBOX',       false); // Set to false for production
