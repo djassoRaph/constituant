@@ -13,11 +13,6 @@
  * @package Constituant
  */
 
-// Ensure CLI mode only
-if (php_sapi_name() !== 'cli') {
-    http_response_code(403);
-    exit('This script can only be run from command line');
-}
 
 // Define app constant
 define('CONSTITUANT_APP', true);
@@ -164,14 +159,6 @@ function callSourceFetcher(string $sourceKey): array
     switch ($sourceKey) {
         case 'legifrance':
             return fetchLegifrance();
-
-        // DEPRECATED: Replaced by Légifrance API (February 2026)
-        // case 'nosdeputes':
-        //     return fetchNosDePutes();
-        // case 'lafabrique':
-        //     return fetchLaFabrique();
-        // case 'eu-parliament':
-        //     return fetchEUParliament();
 
         default:
             logMessage("Unknown source: $sourceKey", 'WARNING');
