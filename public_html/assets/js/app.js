@@ -476,12 +476,14 @@ function toggleHeader() {
     if (header.classList.contains('collapsed')) {
         // Expand header
         header.classList.remove('collapsed');
+        document.body.classList.remove('header-collapsed');
         hideIcon.style.display = '';
         showIcon.style.display = 'none';
         toggleBtn.setAttribute('aria-label', 'Masquer l\'en-tête');
     } else {
         // Collapse header
         header.classList.add('collapsed');
+        document.body.classList.add('header-collapsed');
         hideIcon.style.display = 'none';
         showIcon.style.display = '';
         toggleBtn.setAttribute('aria-label', 'Afficher l\'en-tête');

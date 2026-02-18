@@ -274,7 +274,7 @@ function processLegifranceDossier(array $dossier, string $source): array
 
         // Full text URL — dossiers link differently to promulgated laws
         $fullTextUrl = $dossier['urlDossier'] ?? $dossier['url']
-                    ?? "https://www.legifrance.gouv.fr/dossierlegislatif/id/{$cid}";
+                    ?? "https://www.legifrance.gouv.fr/dossierlegislatif/{$cid}";
 
         $billData = [
             'id'                       => $billId,

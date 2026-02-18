@@ -197,6 +197,11 @@ body {
     position: sticky;
     top: 5rem;
     z-index: 99;
+    transition: top 0.3s ease;
+}
+
+body.header-collapsed .tabs-container {
+    top: 0;
 }
 
 .tab {
