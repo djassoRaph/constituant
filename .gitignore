@@ -167,3 +167,7 @@ Skill.md
 Claude.md
 .claude/
 documentation/
+
+cron/lib/config/api-keys.php
+cron/lib/config/config.php
+cron/lib/config/database.php
