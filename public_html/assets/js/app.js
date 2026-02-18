@@ -20,10 +20,10 @@ function initializeApp() {
 /**
  * Load bills from API
  */
-async function loadBills() {
+async function loadBills(silent = false) {
     try {
         AppState.loading = true;
-        showLoading();
+        if (!silent) showLoading();
 
         const response = await fetch('/api/get-votes.php?level=all');
         const data = await response.json();

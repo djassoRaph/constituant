@@ -22,3 +22,8 @@ define('MISTRAL_TIMEOUT', 30);
 
 // Add other API keys here as needed
 // define('OTHER_API_KEY', 'your-other-api-key-here');
+// PISTE / Légifrance API (https://piste.gouv.fr)
+// OAuth2 client credentials for the Légifrance REST API
+define('PISTE_CLIENT_ID',     'your-piste-oauth-client-id');
+define('PISTE_CLIENT_SECRET', 'your-piste-oauth-client-secret');
+define('PISTE_SANDBOX',       true); // Set to false for production

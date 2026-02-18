@@ -28,9 +28,8 @@ $scriptStartTime = microtime(true);
 // Load dependencies
 require_once __DIR__ . '/lib/fetcher-base.php';
 
-// Load source fetchers
-require_once __DIR__ . '/sources/nosdeputes.php';
-require_once __DIR__ . '/sources/lafabrique.php';
+// Légifrance API source (official government data via PISTE)
+require_once __DIR__ . '/sources/legifrance.php';
 
 // Output header
 echo str_repeat('=', 80) . PHP_EOL;
@@ -157,15 +156,10 @@ try {
 function callSourceFetcher(string $sourceKey): array
 {
     switch ($sourceKey) {
-        case 'nosdeputes':
-            return fetchNosDePutes();
-            
-        case 'lafabrique':
-            return fetchLaFabrique();
-            
-        case 'eu-parliament':
-            return fetchEUParliament();
-            
+        case 'legifrance':
+        case 'legifrance-api':
+            return fetchLegifrance();
+
         default:
             logMessage("Unknown source: $sourceKey", 'WARNING');
             return [

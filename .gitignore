@@ -121,14 +121,11 @@ coverage/
 secrets.json
 
 # API Keys - NEVER commit these!
-public_html/config/api-keys.php
 cron/lib/config/api-keys.php
 
 # Sensitive config files - NEVER commit these!
 cron/lib/config/database.php
 cron/lib/config/config.php
-config/database.php
-config/config.php
 
 # ============================================================================
 # OS Generated
@@ -158,3 +155,6 @@ Thumbs.db
 !public_html/config/api-keys.example.php
 !.gitkeep
 .claude/settings.local.json
+Skill.md
+CLAUDE.md
+.claude/

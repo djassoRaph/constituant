@@ -498,10 +498,29 @@ function logMessage(string $message, string $level = 'INFO'): void
 function getSourceConfig(string $source): ?array
 {
     $sources = [
+        // Légifrance REST API via PISTE (primary source)
+        'legifrance' => [
+            'name'     => 'Légifrance API (PISTE)',
+            'enabled'  => true,
+            'priority' => 1,
+            'base_url' => 'https://api.piste.gouv.fr/dila/legifrance/lf-engine-app',
+        ],
+        // DILA CSV (disabled — column mapping needs updating)
+        'dila' => [
+            'name'    => 'DILA / Légifrance (CSV)',
+            'enabled' => false,
+            'priority' => 2,
+            'base_url' => 'https://www.data.gouv.fr',
+            'endpoints' => [
+                'laws'     => '/fr/datasets/r/35ca58b9-d02b-48c8-bc92-10c59abdbe9c',
+                'measures' => '/fr/datasets/r/e1938c3f-7a0c-46a6-8b1e-58109d7e6999',
+            ],
+        ],
+        // Legacy sources (disabled - replaced by Légifrance API)
         'nosdeputes' => [
             'name' => 'NosDéputés.fr',
-            'enabled' => true,
-            'priority' => 1,
+            'enabled' => false, // Disabled - replaced by DILA
+            'priority' => 10,
             'base_url' => 'https://www.nosdeputes.fr',
             'endpoints' => [
                 'dossiers' => '/dossiers/date/json',
@@ -509,8 +528,8 @@ function getSourceConfig(string $source): ?array
         ],
         'lafabrique' => [
             'name' => 'La Fabrique de la Loi',
-            'enabled' => true,
-            'priority' => 2,
+            'enabled' => false, // Disabled - replaced by DILA
+            'priority' => 11,
             'base_url' => 'https://www.lafabriquedelaloi.fr',
             'endpoints' => [
                 'dossiers' => '/api/dossiers.csv',
@@ -519,14 +538,14 @@ function getSourceConfig(string $source): ?array
         'eu-parliament' => [
             'name' => 'European Parliament',
             'enabled' => false, // Disabled due to 406 errors
-            'priority' => 3,
+            'priority' => 12,
             'base_url' => 'https://data.europarl.europa.eu',
             'endpoints' => [
                 'documents' => '/api/v2/documents',
             ],
         ],
     ];
-    
+
     return $sources[$source] ?? null;
 }
 
@@ -538,16 +557,21 @@ function getSourceConfig(string $source): ?array
 function getEnabledSources(): array
 {
     $sources = [
-        'nosdeputes' => getSourceConfig('nosdeputes'),
-        'lafabrique' => getSourceConfig('lafabrique'),
+        // Primary source: Légifrance REST API via PISTE
+        'legifrance'   => getSourceConfig('legifrance'),
+        // DILA CSV fallback (disabled)
+        'dila'         => getSourceConfig('dila'),
+        // Legacy sources (disabled)
+        'nosdeputes'   => getSourceConfig('nosdeputes'),
+        'lafabrique'   => getSourceConfig('lafabrique'),
         'eu-parliament' => getSourceConfig('eu-parliament'),
     ];
-    
+
     // Filter enabled only
-    $enabled = array_filter($sources, fn($s) => $s['enabled']);
-    
+    $enabled = array_filter($sources, fn($s) => $s !== null && $s['enabled']);
+
     // Sort by priority
     uasort($enabled, fn($a, $b) => $a['priority'] <=> $b['priority']);
-    
+
     return $enabled;
 }

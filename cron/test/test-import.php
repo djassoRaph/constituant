@@ -91,7 +91,7 @@ echo PHP_EOL;
 
 // Test 4: External API Connectivity
 echo "[ 4 ] Testing API connectivity..." . PHP_EOL;
-
+ #Fix this need to update the URLs to match the current sources and endpoints in config and the new api structure. We can also add a test for the Légifrance API if we have credentials set up.
 $testUrls = [
     'NosDéputés' => 'https://www.nosdeputes.fr/dossiers/date/json',
     'EU Parliament' => 'https://data.europarl.europa.eu/api/v2/documents?limit=1',

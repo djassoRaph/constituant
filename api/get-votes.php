@@ -47,8 +47,40 @@
  * @package Constituant
  */
 
-require_once __DIR__ . '/../config/config.php';
-require_once __DIR__ . '/../config/database.php';
+// Start output buffering to catch any errors
+ob_start();
+
+// Set error handler to return JSON
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
+    ob_clean();
+    error_log("PHP Error [$errno]: $errstr in $errfile on line $errline");
+    http_response_code(500);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => false,
+        'error' => 'An internal error occurred'
+    ]);
+    exit;
+});
+
+// Set exception handler to return JSON
+set_exception_handler(function($exception) {
+    ob_clean();
+    error_log('Unhandled exception in get-votes.php: ' . $exception->getMessage() . ' in ' . $exception->getFile() . ':' . $exception->getLine());
+    http_response_code(500);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => false,
+        'error' => 'An internal error occurred'
+    ]);
+    exit;
+});
+
+require_once __DIR__ . '/../../cron/lib/config/config.php';
+require_once __DIR__ . '/../../cron/lib/config/database.php';
+
+// Clean output buffer before sending JSON
+ob_end_clean();
 
 // Only allow GET requests
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
@@ -73,6 +105,7 @@ try {
             b.title,
             b.summary,
             b.ai_summary,
+            b.mistral_ai_json_response,
             b.theme,
             b.full_text_url,
             b.level,
@@ -148,11 +181,21 @@ try {
         // Get urgency information
         $urgency = getVoteUrgency($bill['vote_datetime']);
 
+        // Parse AI JSON response
+        $aiData = null;
+        if (!empty($bill['mistral_ai_json_response'])) {
+            $decoded = json_decode($bill['mistral_ai_json_response'], true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $aiData = $decoded;
+            }
+        }
+
         $formattedBills[] = [
             'id' => $bill['id'],
             'title' => $bill['title'],
             'summary' => $bill['summary'],
             'ai_summary' => $bill['ai_summary'],
+            'ai_data' => $aiData,
             'theme' => $bill['theme'] ?? 'Sans catégorie',
             'full_text_url' => $bill['full_text_url'],
             'level' => $bill['level'],
