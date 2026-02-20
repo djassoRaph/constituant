@@ -1053,3 +1053,41 @@ body.header-collapsed .tabs-container {
     text-align: center;
     padding: var(--spacing-lg);
 }
+/* ============================================================================
+   Theme Filter Pills
+   ========================================================================== */
+
+.filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem var(--spacing-md);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.filter-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--color-border, #e0e0e0);
+    background: white;
+    color: var(--color-text, #333);
+    font-size: 0.82rem;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.filter-pill:hover {
+    border-color: var(--color-primary, #6A6AF4);
+    color: var(--color-primary, #6A6AF4);
+}
+
+.filter-pill.active {
+    background: var(--color-primary, #6A6AF4);
+    border-color: var(--color-primary, #6A6AF4);
+    color: white;
+}

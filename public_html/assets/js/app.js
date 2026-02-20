@@ -6,6 +6,7 @@
 const AppState = {
     bills: [],
     currentTab: 'active',
+    currentFilter: null, // null = all themes
     loading: false
 };
 
@@ -64,8 +65,52 @@ function renderApp() {
     // Show tabs
     document.getElementById('tabs-container').classList.remove('hidden');
 
-    // Render current tab
-    renderBills(AppState.currentTab === 'active' ? activeBills : pastBills);
+    // Get bills for current tab
+    const tabBills = AppState.currentTab === 'active' ? activeBills : pastBills;
+
+    // Render theme filters
+    renderFilters(tabBills);
+
+    // Apply current filter
+    const filtered = AppState.currentFilter
+        ? tabBills.filter(b => b.theme === AppState.currentFilter)
+        : tabBills;
+
+    // Render bills
+    renderBills(filtered);
+}
+
+/**
+ * Render theme filter pills
+ */
+function renderFilters(bills) {
+    // Get unique themes from current bill set
+    const themes = [...new Set(bills.map(b => b.theme).filter(t => t && t !== 'Sans catégorie'))].sort();
+
+    const container = document.getElementById('filter-container');
+    if (!container) return;
+
+    if (themes.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
+
+    const pills = ['Tous', ...themes].map(theme => {
+        const isActive = theme === 'Tous'
+            ? AppState.currentFilter === null
+            : AppState.currentFilter === theme;
+        return `<button type="button" class="filter-pill${isActive ? ' active' : ''}" onclick="setFilter(${theme === 'Tous' ? 'null' : `'${theme.replace(/'/g, "\\'")}'`})">${theme}</button>`;
+    }).join('');
+
+    container.innerHTML = pills;
+}
+
+/**
+ * Set theme filter
+ */
+function setFilter(theme) {
+    AppState.currentFilter = theme;
+    renderApp();
 }
 
 /**
@@ -338,6 +383,7 @@ function switchTab(tab, event) {
     if (AppState.loading) return;
 
     AppState.currentTab = tab;
+    AppState.currentFilter = null; // Reset filter on tab switch
 
     // Update tab buttons
     document.querySelectorAll('.tab-button').forEach(btn => {
@@ -499,3 +545,4 @@ window.toggleHeader = toggleHeader;
 window.getVoteLabel = getVoteLabel;
 window.escapeHtml = escapeHtml;
 window.showToast = showToast;
+window.setFilter = setFilter;

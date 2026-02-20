@@ -118,6 +118,9 @@ if ($billData) {
                 </button>
             </div>
 
+            <!-- Theme Filters -->
+            <div id="filter-container" class="filter-container"></div>
+
             <!-- Bills Grid -->
             <div id="bills-container" class="bills-container hidden">
                 <div id="bills-grid" class="bills-grid">
